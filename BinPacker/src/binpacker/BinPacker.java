@@ -5,6 +5,9 @@
  */
 package binpacker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author SHOP
@@ -20,27 +23,15 @@ public class BinPacker {
     
     
     class Node{
-        /*
-        tree structure:
-        node for each rectangle object
-        - 2 to 4 children
-        -each child represents all possible max-sized rectangles 
-         that can fit in the leftover space plus next highest valued
-         table that can fit in the bottom left hand corner. 
-         (two children represent both a 0 degree rotated table and
-          a 90 degree rotated table if possible)
-        -if the child can not fit a table, disregard the child.
-        */
-
-        //these nodes are for first leftover rectangle
-        //orientation 0, orientation 90
-        Node child1;
-        Node child2;
         
-        //these nodes are for second leftover rectangle
-        //orientation 0, orientation 90
-        Node child3;
-        Node child4;
+    //DATA
+        //list of tables
+        List<Table> tableList;
+        //inverted list of tables (rotated 90deg)
+        List<Table> tableList_inv;
+
+        //children list
+        List<Node> children;
         
         //size of empty space available for this node
         Rect size;
@@ -51,40 +42,74 @@ public class BinPacker {
         //table that fits, if any
         Table table;
         
-        void setLeftoverSpace(){
+    //MEMBERS CONSTRUCTORS DESTRUCTORS
+        Node(List<Table> newList, List<Table> newInvList){
+            tableList = newList;
+            tableList_inv = newInvList;
+            size = new Rect();
+            location = new Rect();
+            table = new Table();
+        }
+        
+        void setChildren(){
             if(!table.name.equals("NULL")){
-                
-                //since a table exists in this space, create child nodes
-                child1 = new Node();
-                child2 = new Node();
-                child3 = new Node();
-                child4 = new Node();
                 
                 //get first rectangle size
                 Rect rect1 = new Rect(
                     size.width,
                     (size.height - table.size.height)
                 );
+                //create children for this rectangle size and 0 orientation
+                setChildList(tableList, rect1);
+                
                 
                 //get second rectangle size
                 Rect rect2 = new Rect(
                     (size.width - table.size.width),
                     size.height
                 );
-                
-                //set children to their sizes
-                child1.size = rect1;
-                child2.size = rect1;
-                child3.size = rect2;
-                child4.size = rect2;
+                //create children for this rectangle size and 90 orientation
+                setChildList(tableList_inv, rect2);
                 
             }
             //if table is null then no more tables can be inserted
             //into this space so children are left as null
+            //or a table has not been inserted yet
         }
+        
+        void setChildList(List<Table> newList, Rect newRect){
+            //create children for this rectangle size and 0 orientation
+            for(Table t : newList){
 
+                //if table can fit
+                if(t.size.width <= newRect.width &&
+                   t.size.height <= newRect.height){
+
+                    //create child
+                    Node child = new Node(tableList,tableList_inv);
+                    //set empty space
+                    child.size = newRect;
+                    //add table to child
+                    child.table = t;
+                    //add child to children list
+                    children.add(child);
+
+                }
+            }
+        }
+        
+        
+    //GETTERS SETTERS
+        void setTable(Table newTable){
+            table = newTable;
+        }
+        void setSize(Rect newSize){
+            size = newSize;
+        }
     }   
 
+    
+//STRUCTURES
     class Rect{
         double width;
         double height;
