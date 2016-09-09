@@ -7,6 +7,7 @@ package binpacker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -14,14 +15,111 @@ import java.util.List;
  */
 public class BinPacker {
 
-    /**
-     * @param args the command line arguments
-     */
+/*############################################################################*/
     public static void main(String[] args) {
-        // TODO code application logic here
+        Scanner scan = new Scanner(System.in);
+        BinPacker bp = new BinPacker();
+        
+        System.out.println("Please Enter Data");
+        
+//        System.out.println("Size of Aluminum Sheet "
+//                + "(width 'space' height 'enter'):");
+        bp.tree.size.width = scan.nextInt();
+        bp.tree.size.height = scan.nextInt();
+        
+//        System.out.println("Number of Tables:");
+        int numTables = scan.nextInt();
+        scan.nextLine();  //prepare for string input
+        
+//        System.out.println("List Out All Tables (Table Name 'space' "
+//                + "Table Width 'space' Table Height 'space' "
+//                + "Table Price 'enter'):");
+        
+        for(int i = 0; i < numTables; i++){
+            
+            String tName = scan.nextLine();
+            double tWidth = scan.nextDouble();
+            double tHeight = scan.nextDouble();
+            double tPrice = scan.nextDouble();
+            scan.nextLine();
+            
+            if(i == 0){
+                bp.setFirstTable(tName, tWidth, tHeight, tPrice);
+            }
+            else{
+                bp.addTable(tName, tWidth, tHeight, tPrice);
+            }
+            
+        }
+        
+//        for(int i = 0; i < numTables; i++){
+//            System.out.println(
+//                    bp.tree.tableList.get(i).name + " "
+//                    + Double.toString(bp.tree.tableList.get(i).sellingPrice)
+//            );
+//        }
+        
+        bp.run();
+        
     }
     
+/*############################################################################*/
     
+//start of BinPacker Class
+    
+//DATA
+    Node tree;
+    Table t;
+    
+//CONSTRUCTOR
+    public BinPacker(){
+        tree = new Node();
+        t = new Table();
+    }
+    
+//MEMBERS
+    void addTable(String newName, double newWidth, 
+            double newHeight, double newPrice){
+        
+        tree.tableList.add(
+            new Table(
+                newName,
+                0,
+                newWidth,
+                newHeight,
+                newPrice
+            )
+        );
+        
+        addTableInv(newName, newWidth, newHeight, newPrice);
+    }
+    
+    void addTableInv(String newName, double newWidth, 
+            double newHeight, double newPrice){
+        
+        tree.tableList_inv.add(
+            new Table(
+                newName,
+                90,
+                newHeight,
+                newWidth,
+                newPrice
+            )
+        );
+    }
+    
+    void setFirstTable(String newName, double newWidth, 
+            double newHeight, double newPrice){
+        tree.table = new Table(newName, 0, newWidth, newHeight,newPrice);
+    }
+    
+    void run(){
+        tree.setChildren();
+        tree.runTree();
+    }
+
+    
+//STRUCTURES
     class Node{
         
     //DATA
@@ -48,7 +146,7 @@ public class BinPacker {
         Table table;
         
     //MEMBERS CONSTRUCTORS DESTRUCTORS
-        Node(List<Table> newList, List<Table> newInvList){
+        public Node(List<Table> newList, List<Table> newInvList){
             tableList = newList;
             tableList_inv = newInvList;
             branchValue = 0;
@@ -57,7 +155,7 @@ public class BinPacker {
             location = new Rect();
             table = new Table();
         }
-        Node(){
+        public Node(){
             tableList = new ArrayList<Table>();
             tableList_inv = new ArrayList<Table>();
             children = new ArrayList<Node>();
@@ -75,6 +173,7 @@ public class BinPacker {
             setBranchValue();
             printAnswer();
         }
+        
         void setBranchValue(){
             
             if(!children.isEmpty()){
@@ -84,7 +183,7 @@ public class BinPacker {
                 int ch_si = children.size();
                 for(int i = 0; i < ch_si; i++){
                     
-                    if(children.get(1).branchValue == 0){
+                    if(children.get(i).branchValue == 0){
                         children.get(i).setBranchValue();
                         
                         if(children.get(i).branchValue > this.branchValue)
@@ -94,6 +193,13 @@ public class BinPacker {
                     
                 }
                 
+                this.branchValue += this.table.sellingPrice;
+                
+                tablesOut = String.format(
+                        ","+this.table.name+"-%.4f,%.4f ",
+                        this.location.width, 
+                        this.location.height
+                );
                 tablesOut += newBranch;
                 
             }
@@ -101,8 +207,7 @@ public class BinPacker {
                 
                 this.branchValue = this.table.sellingPrice;
                 this.tablesOut = String.format(
-                        ",%d-%d,%d ", 
-                        this.table.name, 
+                        ","+this.table.name+"-%.4f,%.4f ",
                         this.location.width, 
                         this.location.height
                 );
@@ -110,6 +215,7 @@ public class BinPacker {
             }
             
         }
+        
         void printAnswer(){
             System.out.println(tablesOut);
         }
@@ -208,7 +314,7 @@ public class BinPacker {
         }
         
         void runThroughChildren(){
-            if(children.size() != 0){
+            if(!children.isEmpty()){
                 for(Node n : children){
                     n.setChildren();
                 }
@@ -220,23 +326,23 @@ public class BinPacker {
         void setTable(Table newTable){
             table = newTable;
         }
+        
         void setSize(Rect newSize){
             size = newSize;
         }
-f        
+        
+
     }   
 
-    
-//STRUCTURES
     class Rect{
         double width;
         double height;
         
-        Rect(){
+        public Rect(){
             width = 0;
             height = 0;
         }
-        Rect(double newWidth, double newHeight){
+        public Rect(double newWidth, double newHeight){
             width = newWidth;
             height = newHeight;
         }
@@ -249,12 +355,21 @@ f
         int orientation;
         double sellingPrice;
         
-        Table(){
+        public Table(){
             name = "NULL";
             orientation = 0;
             size = new Rect();
             sellingPrice = 0;
         }
+        
+        public Table(String newName, int newOrient, double newWidth, 
+            double newHeight, double newPrice){
+            name = newName;
+            orientation = newOrient;
+            size = new Rect(newWidth,newHeight);
+            sellingPrice = newPrice;
+        }
+        
     }
 
 }
