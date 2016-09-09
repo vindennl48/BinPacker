@@ -59,8 +59,13 @@ public class BinPacker {
                     size.width,
                     (size.height - table.size.height)
                 );
+                //get first rectangle location
+                Rect rect1Loc = new Rect(
+                    location.width,
+                    (table.size.height + location.height)
+                );
                 //create children for this rectangle size and 0 orientation
-                setChildList(tableList, rect1);
+                setChildList(tableList, rect1, rect1Loc);
                 
                 
                 //get second rectangle size
@@ -68,16 +73,24 @@ public class BinPacker {
                     (size.width - table.size.width),
                     size.height
                 );
+                //get second rectangle location
+                Rect rect2Loc = new Rect(
+                    (table.size.width + location.width),
+                    location.height
+                );
                 //create children for this rectangle size and 90 orientation
-                setChildList(tableList_inv, rect2);
+                setChildList(tableList_inv, rect2, rect2Loc);
                 
             }
             //if table is null then no more tables can be inserted
             //into this space so children are left as null
             //or a table has not been inserted yet
+            
+            //run through all children the same way
+            runThroughChildren();
         }
         
-        void setChildList(List<Table> newList, Rect newRect){
+        void setChildList(List<Table> newList, Rect newRect, Rect newLocation){
             //create children for this rectangle size and 0 orientation
             for(Table t : newList){
 
@@ -89,6 +102,8 @@ public class BinPacker {
                     Node child = new Node(tableList,tableList_inv);
                     //set empty space
                     child.size = newRect;
+                    //set location of child
+                    child.location = newLocation;
                     //add table to child
                     child.table = t;
                     //add child to children list
@@ -98,6 +113,13 @@ public class BinPacker {
             }
         }
         
+        void runThroughChildren(){
+            if(children.size() != 0){
+                for(Node n : children){
+                    n.setChildren();
+                }
+            }
+        }
         
     //GETTERS SETTERS
         void setTable(Table newTable){
