@@ -192,30 +192,27 @@ public class Node {
 
                     //create child
                     Node child = new Node();
-
-                    //set table lists
+                    
                     boolean removed = false;
-                    for(Table a : tableList){
-                        if(a.name.equals(t.name) && !removed){
+                    for(int i = 0; i < tableList.size(); i++){
+                        if(tableList.get(i).equals(t.name) && !removed){
+                           
                             removed = true;
-                            System.out.println("removed 0deg");
+                            System.out.println("removed");
+                            
                         }
                         else{
-                            child.tableList.add(a);
+                            
+                            child.tableList.add(tableList.get(i));
+                            child.tableList_inv.add(tableList_inv.get(i));
+                            
+                            System.out.println("added");
+                            
                         }
                     }
-
-                    removed = false;
-                    for(Table a : tableList_inv){
-                        child.tableList_inv.add(a);
-                       if(a.name.equals(t.name) && !removed){
-                            removed = true;
-                        }
-                        else{
-                            child.tableList_inv.add(a);
-                            System.out.println("removed 90deg");
-                        }
-                    }
+                    
+                    printTableList(tableList, "tableList");
+                    printTableList(tableList_inv, "tableList_inv");
 
                     //set empty space
                     child.size = newRect;
@@ -235,7 +232,6 @@ public class Node {
                 else{
                     System.out.println("Num 1 no children added");
                 }
-                
             }
 
         }
@@ -256,33 +252,25 @@ public class Node {
 
                     //create child
                     Node child = new Node();
-
-                    //set table lists
+                    
                     boolean removed = false;
-                    for(Table a : tableList){
-                        if(a.name.equals(t.name) && !removed){
+                    for(int i = 0; i < tableList.size(); i++){
+                        if(tableList.get(i).equals(t.name) && !removed){
+                           
                             removed = true;
-                            System.out.println("removed 0deg");
+                            System.out.println("removed");
+                            
                         }
                         else{
-                            child.tableList.add(a);
+                            
+                            child.tableList.add(tableList.get(i));
+                            child.tableList_inv.add(tableList_inv.get(i));
+                            
                         }
                     }
                     
-                    System.out.println("-aa-");
-                    removed = false;
-                    for(Table a : tableList_inv){
-                        child.tableList_inv.add(a);
-                       if(a.name.equals(t.name) && !removed){
-                            removed = true;
-                            System.out.println("removed 90deg");
-                        }
-                        else{
-                            child.tableList_inv.add(a);
-                            System.out.println("Added " + a.name);
-                        }
-                    }
-                    System.out.println("-bb-");
+                    printTableList(tableList, "tableList");
+                    printTableList(tableList_inv, "tableList_inv");
 
                     //set empty space
                     child.size = newRect;
@@ -311,6 +299,17 @@ public class Node {
     }
 
     void runThroughChildren(){
+        
+        for(Node n : children){
+            n.printNode();
+        }
+        
+        System.out.println("Run Through Children.. Press Enter");
+        try {
+            System.in.read();
+        } catch (IOException ex) {
+            Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if(!children.isEmpty()){
             for(Node n : children){
                 n.setChildren();
@@ -331,19 +330,25 @@ public class Node {
 
 //OTHER
     void printNode(){
-        System.out.println("Node: " + Long.toString(numChildren));
+        System.out.println("Num Nodes: " + Long.toString(numChildren));
         System.out.println(
                 "    Table That Fits: " + table.name
         );
-        printList(tableList, "tableList");
-        printList(tableList_inv, "tableList_inv");
+        printTableList(tableList, "tableList");
+        printTableList(tableList_inv, "tableList_inv");
+        System.out.println();
     }
     
-    void printList(List<Table> tables, String name){
+    void printTableList(List<Table> tables, String name){
         System.out.print("List " + name + ": ");
         
-        for(Table t : tables){
-            System.out.print(t.name + " ");
+        if(!tables.isEmpty()){
+            for(Table t : tables){
+                System.out.print(t.name + " ");
+            }
+        }
+        else{
+            System.out.println("Table Empty");
         }
     }
 }
