@@ -20,50 +20,9 @@ public class BinPacker {
 
 /*############################################################################*/
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
         BinPacker bp = new BinPacker();
-        
-        System.out.println("Please Enter Data");
-        
-//        System.out.println("Size of Aluminum Sheet "
-//                + "(width 'space' height 'enter'):");
-        bp.tree.size.width = scan.nextInt();
-        bp.tree.size.height = scan.nextInt();
-        
-//        System.out.println("Number of Tables:");
-        int numTables = scan.nextInt();
-        scan.nextLine();  //prepare for string input
-        
-//        System.out.println("List Out All Tables (Table Name 'space' "
-//                + "Table Width 'space' Table Height 'space' "
-//                + "Table Price 'enter'):");
-        
-        for(int i = 0; i < numTables; i++){
-            
-            String tName = scan.nextLine();
-            double tWidth = scan.nextDouble();
-            double tHeight = scan.nextDouble();
-            double tPrice = scan.nextDouble();
-            scan.nextLine();
-            
-            if(i == 0){
-                bp.setFirstTable(tName, tWidth, tHeight, tPrice);
-            }
-            else{
-                bp.addTable(tName, tWidth, tHeight, tPrice);
-            }
-            
-        }
-        
-//        for(int i = 0; i < numTables; i++){
-//            System.out.println(
-//                    bp.tree.tableList.get(i).name + " "
-//                    + Double.toString(bp.tree.tableList.get(i).sellingPrice)
-//            );
-//        }
-
+        bp.getInfo();
         bp.run();
-        
     }
     
 /*############################################################################*/
@@ -77,11 +36,43 @@ public class BinPacker {
 //CONSTRUCTOR
     public BinPacker(){
         tree = new Node();
-        tree.numChildren = 0;
+        tree.resetNumChildren();
         t = new Table();
     }
     
 //MEMBERS
+    void getInfo(){
+        Scanner scan = new Scanner(System.in);
+        
+        System.out.println("Please Enter Data");
+        
+        //set size of aluminum sheet
+        setWidth(scan.nextInt());
+        setHeight(scan.nextInt());
+        
+        //set number of tables
+        int numTables = scan.nextInt();
+        scan.nextLine();  //prepare for string input
+        
+        //list out all tables
+        for(int i = 0; i < numTables; i++){
+            
+            String tName = scan.nextLine();
+            double tWidth = scan.nextDouble();
+            double tHeight = scan.nextDouble();
+            double tPrice = scan.nextDouble();
+            scan.nextLine();
+            
+            if(i == 0){
+                setFirstTable(tName, tWidth, tHeight, tPrice);
+            }
+            else{
+                addTable(tName, tWidth, tHeight, tPrice);
+            }
+            
+        }
+    }
+    
     void addTable(String newName, double newWidth, 
             double newHeight, double newPrice){
         
@@ -94,33 +85,31 @@ public class BinPacker {
                 newPrice
             )
         );
-        
-        addTableInv(newName, newWidth, newHeight, newPrice);
-    }
-    
-    void addTableInv(String newName, double newWidth, 
-            double newHeight, double newPrice){
-        
-        tree.tableList_inv.add(
-            new Table(
-                newName,
-                90,
-                newHeight,
-                newWidth,
-                newPrice
-            )
-        );
     }
     
     void setFirstTable(String newName, double newWidth, 
             double newHeight, double newPrice){
-        tree.table = new Table(newName, 0, newWidth, newHeight,newPrice);
+        tree.setTable(
+            new Table(
+                newName, 0, newWidth, newHeight, newPrice
+            )
+        );
+    }
+    
+    void setWidth(double newWidth){
+        tree.setWidth(newWidth);
+    }
+    
+    void setHeight(double newHeight){
+        tree.setHeight(newHeight);
     }
     
     void run(){
         System.out.println("setting children");
         tree.setChildren();
         System.out.println("finished setting children");
+        
+        tree.pauseCmd();
         
         System.out.println("running tree");
         tree.runTree();
