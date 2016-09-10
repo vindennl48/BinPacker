@@ -32,7 +32,8 @@ public class Node {
     private String tablesOut;
 
     //size of empty space available for this node
-    private Rect size;
+    public List<Rect> sizes;
+    public static Rect nodeSize;
 
     //location of empty space within the original allotted space
     private Rect location;
@@ -42,22 +43,28 @@ public class Node {
 
 //MEMBERS CONSTRUCTORS DESTRUCTORS
     public Node(List<Table> newList){
+        numChildren++;
+        
         tableList = newList;
         children = new ArrayList<Node>();
+        sizes = new ArrayList<Rect>();
 
+        nodeSize = new Rect();
         branchValue = 0;
         tablesOut = "";
-        size = new Rect();
         location = new Rect();
         table = new Table();
     }
     public Node(){
+        numChildren++;
+        
         tableList = new ArrayList<Table>();
         children = new ArrayList<Node>();
+        sizes = new ArrayList<Rect>();
 
+        nodeSize = new Rect();
         branchValue = 0;
         tablesOut = "";
-        size = new Rect();
         location = new Rect();
         table = new Table();
     };
@@ -125,7 +132,100 @@ public class Node {
 
 
 //SETTING UP THE TREE
+    
     void setChildren(){
+        if(!tableList.isEmpty()){
+            
+            //if sizes are empty, we are the top node
+            if(sizes.isEmpty()){
+                sizes.add(getEmptyRect(1, table, nodeSize));
+                sizes.add(getEmptyRect(2, table, nodeSize));
+            }
+                            
+            int si_sz = sizes.size();
+            for(int i = 0; i < si_sz; i++){
+                
+                int ta_sz = tableList.size();
+                for(int j = 0; j < ta_sz; j++){
+                    
+                    if(tableList.get(i).getWidth() <= sizes.get(i).getWidth() &&
+                       tableList.get(i).getHeight() <= sizes.get(i).getHeight()){
+                        
+                        makeChild(tableList.get(j), i);
+                    
+                    }
+                    
+                    //90deg rotation check
+                    if(tableList.get(i).getHeight()<= sizes.get(i).getWidth() &&
+                       tableList.get(i).getWidth()<= sizes.get(i).getHeight()){
+                        
+                        Table t = new Table();
+                        t.set(tableList.get(j));
+                        t.invertSize();
+                        
+                        makeChild(t, i);
+                    
+                    }
+                }
+            }
+            
+            int ch_sz = children.size();
+            for(int i = 0; i < ch_sz; i++){
+                children.get(i).setChildren();
+            }
+            
+        }
+    }
+    
+    void makeChild(Table newTable, int sizeItr){
+        
+        Node child = new Node();
+        
+        child.table.set(newTable);
+        
+        int si_sz = sizes.size();
+        for(int i = 0; i < si_sz; i++){
+            if(i != sizeItr){
+                Rect r = new Rect();
+                r.set(sizes.get(i));
+                child.sizes.add(r);
+            }
+        }
+        
+        int tb_sz = tableList.size();
+        for(int i = 0; i < tb_sz; i++){
+            if(!tableList.get(i).getName().equals(newTable.getName())){
+                child.tableList.add(tableList.get(i));
+            }
+        }
+        
+        child.sizes.add(getEmptyRect(1, newTable, sizes.get(sizeItr)));
+        child.sizes.add(getEmptyRect(2, newTable, sizes.get(sizeItr)));
+        
+        children.add(child);
+        
+    }
+    
+    //1 for left rect, 2 for right rect
+    Rect getEmptyRect(int firstOrSecond, Table t, Rect area){
+        Rect r = new Rect();
+        
+        if(firstOrSecond == 1){
+            r.setHeight(area.getHeight()- t.getHeight());
+            r.setWidth(area.getWidth());
+            return r;
+        }
+        else if(firstOrSecond == 2){
+            r.setWidth(area.getWidth() - t.getWidth());
+            r.setHeight(area.getHeight());
+            return r;
+        }
+        else{
+            return r;
+        }
+    }
+    
+    void setChildren_old(){
         if(!tableList.isEmpty()){
             //get first rectangle size
             Rect rect1 = new Rect(
