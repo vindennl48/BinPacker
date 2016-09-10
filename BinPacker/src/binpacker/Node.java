@@ -250,9 +250,11 @@ public class Node {
     }
     void runThroughChildren(){
         
+        System.out.println("Printing Children-----------");
         for(Node n : children){
             n.printNode();
         }
+        System.out.println("Done Printing Children------");
         
         System.out.println("Run Through Children.. Press Enter");
         pauseCmd();
