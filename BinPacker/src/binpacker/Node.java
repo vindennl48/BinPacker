@@ -100,9 +100,10 @@ public class Node {
             branchValue += table.getPrice();
 
             tablesOut = String.format(
-                "%s: %.4f, %.4f\n%s", 
-                table.getName(), location.getWidth(), 
-                location.getHeight(), newBranch
+                "%s: %ddeg: %.4f, %.4f | %.4f, %.4f\n%s", 
+                table.getName(), table.getOrient(), location.getWidth(), 
+                location.getHeight(), (location.getWidth()+table.getWidth()),
+                (location.getHeight()+table.getHeight()), newBranch
             );
 
         }
@@ -111,9 +112,10 @@ public class Node {
             branchValue = table.getPrice();
             
             tablesOut = String.format(
-                "%s: %.4f, %.4f\n", 
-                table.getName(), location.getWidth(), 
-                location.getHeight()
+                "%s: %ddeg: %.4f, %.4f | %.4f, %.4f\n", 
+                table.getName(), table.getOrient(), location.getWidth(), 
+                location.getHeight(), (location.getWidth()+table.getWidth()),
+                (location.getHeight()+table.getHeight())
             );
 
         }
@@ -140,6 +142,8 @@ public class Node {
             if(sizes.isEmpty()){
                 sizes.add(getEmptyRect(1, table, nodeSize));
                 sizes.add(getEmptyRect(2, table, nodeSize));
+                printSizes();
+                pauseCmd();
             }
                             
             int si_sz = sizes.size();
@@ -148,16 +152,16 @@ public class Node {
                 int ta_sz = tableList.size();
                 for(int j = 0; j < ta_sz; j++){
                     
-                    if(tableList.get(i).getWidth() <= sizes.get(i).getWidth() &&
-                       tableList.get(i).getHeight() <= sizes.get(i).getHeight()){
-                        
+                    if(tableList.get(j).getWidth() <= sizes.get(i).getWidth() &&
+                       tableList.get(j).getHeight() <= sizes.get(i).getHeight()){
+                                                
                         makeChild(tableList.get(j), i);
                     
                     }
                     
                     //90deg rotation check
-                    if(tableList.get(i).getHeight()<= sizes.get(i).getWidth() &&
-                       tableList.get(i).getWidth()<= sizes.get(i).getHeight()){
+                    if(tableList.get(j).getHeight()<= sizes.get(i).getWidth() &&
+                       tableList.get(j).getWidth()<= sizes.get(i).getHeight()){
                         
                         Table t = new Table();
                         t.set(tableList.get(j));
@@ -182,6 +186,8 @@ public class Node {
         Node child = new Node();
         
         child.table.set(newTable);
+        
+        child.location.set(sizes.get(sizeItr).getLoc());
         
         int si_sz = sizes.size();
         for(int i = 0; i < si_sz; i++){
@@ -213,11 +219,15 @@ public class Node {
         if(firstOrSecond == 1){
             r.setHeight(area.getHeight()- t.getHeight());
             r.setWidth(area.getWidth());
+            r.setLocHeight(area.getLocHeight() + t.getHeight());
+            r.setLocWidth(area.getLocWidth());
             return r;
         }
         else if(firstOrSecond == 2){
             r.setWidth(area.getWidth() - t.getWidth());
             r.setHeight(area.getHeight());
+            r.setLocHeight(area.getLocHeight());
+            r.setLocWidth(area.getLocWidth()+ t.getWidth());
             return r;
         }
         else{
@@ -225,158 +235,21 @@ public class Node {
         }
     }
     
-    void setChildren_old(){
-        if(!tableList.isEmpty()){
-            //get first rectangle size
-            Rect rect1 = new Rect(
-                size.getWidth(),
-                (size.getHeight() - table.getSize().getHeight())
-            );
-            //get first rectangle location
-            Rect rect1Loc = new Rect(
-                location.getWidth(),
-                (table.getSize().getHeight() + location.getHeight())
-            );
-            //create children for this rectangle size and 0 orientation
-            rect1.print("rect1");
-            rect1Loc.print("rect1Loc");
 
-            System.out.println("set Child List 1");
-            setChildList(rect1, rect1Loc);
-            System.out.println("Finished Child List 1");
-
-            //get second rectangle size
-            Rect rect2 = new Rect(
-                (size.getWidth() - table.getSize().getWidth()),
-                size.getHeight()
-            );
-            //get second rectangle location
-            Rect rect2Loc = new Rect(
-                (table.getSize().getWidth() + location.getWidth()),
-                location.getHeight()
-            );
-            //create children for this rectangle size and 90 orientation
-            rect2.print("rect2");
-            rect2Loc.print("rect2Loc");
-
-            System.out.println("set Child List 2");
-            setChildList(rect2, rect2Loc);
-            System.out.println("Finished Child List 2");
-
-
-            //if table is null then no more tables can be inserted
-            //into this space so children are left as null
-            //or a table has not been inserted yet
-            //run through all children the same way
-
-            pauseCmd();
-
-            runThroughChildren();
-        }
-    }
-    void setChildList(Rect newRect, Rect newLocation){
-        //create children for this rectangle size and 0 orientation
-        for(Table t : tableList){
-
-            //if table can fit at 0deg
-            if(t.getWidth() <= newRect.getWidth() &&
-               t.getHeight() <= newRect.getHeight()){
-                
-                createChild(t, newRect, newLocation);
-                
-            }//else if 90deg fits
-            else if(t.getHeight()<= newRect.getWidth() &&
-                    t.getWidth()<= newRect.getHeight()){
-                
-                Table invTable = new Table();
-                invTable.set(t);
-                invTable.invertSize();
-                
-                createChild(invTable, newRect, newLocation);
-                
-            }
-            else{
-                System.out.print("No Children Added\n");
-            }
-        }
-    }
-    void createChild(Table t, Rect newRect, Rect newLocation){
-        
-        //create child
-        Node child = new Node();
-
-        boolean isGone = false;
-        int tb_sz = tableList.size();
-        for(int i = 0; i < tb_sz; i++){
-
-            Table tNext = tableList.get(i);
-
-            if(tNext.getName().equals(t.getName()) && !isGone){
-
-                isGone = true;
-                System.out.println("removed");
-
-            }
-            else{
-                Table tNew = tNext;
-
-                child.tableList.add(tNew);
-
-                System.out.println("added");
-
-            }
-        }
-
-        child.printTableList();
-
-        //set empty space
-        child.setSize(newRect);
-
-        //set location of child
-        child.setLocation(newLocation);
-
-        //add table to child
-        child.table.set(t);
-
-        //add child to children list
-        children.add(child);
-        numChildren += 1;
-        System.out.print(
-        String.format(
-            "\nNum Children Update: %d\n", 
-            numChildren
-        )
-        );
-    }
-    void runThroughChildren(){
-        
-        System.out.println("Printing Children-----------");
-        for(Node n : children){
-            n.printNode();
-        }
-        System.out.println("Done Printing Children------");
-        
-        System.out.println("Run Through Children.. Press Enter");
-        pauseCmd();
-        
-        for(Node n : children){
-            n.setChildren();
-        }
-    }
 
 
 //GETTERS SETTERS
+    void setNodeSize(Rect r){
+        nodeSize.set(r);
+    }
+    void setNodeSizeWidth(double newWidth){
+        nodeSize.setWidth(newWidth);
+    }
+    void setNodeSizeHeight(double newHeight){
+        nodeSize.setHeight(newHeight);
+    }
     void setTable(Table newTable){
         table.set(newTable);
-    }
-    void setSize(Rect newSize){
-        size.set(newSize);
-    }
-    void setWidth(double newWidth){
-        size.setWidth(newWidth);
-    }
-    void setHeight(double newHeight){
-        size.setHeight(newHeight);
     }
     void setLocation(Rect newLoc){
         location.set(newLoc);
@@ -404,9 +277,9 @@ public class Node {
           + "Node: \n"
           + "Table: %s\n"
           + "Num Children: %d\n"
-          + "Size of Space: %.4f, %.4f\n"
+          + "Num of Sizes: %d\n"
           + "Location: %.4f, %.4f\n",
-            table.getName(), children.size(),size.getWidth(), size.getHeight(),
+            table.getName(), children.size(), sizes.size(),
             location.getWidth(), location.getHeight()
         )
         );
@@ -425,6 +298,24 @@ public class Node {
         if(!tableList.isEmpty()){
             for(Table t : tableList){
                 t.print();
+            }
+        }
+        else{
+            System.out.print("Table Empty\n");
+        }
+        
+        System.out.print(
+            "----------------------------\n"
+        );
+    }
+    void printSizes(){
+        System.out.print(
+            "----------------------------\n"
+          + "Size List:\n"
+        );
+        if(!sizes.isEmpty()){
+            for(Rect r : sizes){
+                r.printWithLoc("Empty Space Sizes");
             }
         }
         else{

@@ -97,11 +97,11 @@ public class BinPacker {
     }
     
     void setWidth(double newWidth){
-        tree.setWidth(newWidth);
+        tree.setNodeSizeWidth(newWidth);
     }
     
     void setHeight(double newHeight){
-        tree.setHeight(newHeight);
+        tree.setNodeSizeHeight(newHeight);
     }
     
     void run(){
