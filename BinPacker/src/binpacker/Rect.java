@@ -100,4 +100,43 @@ public class Rect {
         setLocWidth(newRect.width);
         setLocHeight(newRect.height);
     }
+    
+    void setAll(Rect newRect){
+        set(newRect);
+        setLoc(newRect);
+    }
+    
+    Rect getAbsWH(){
+        Rect r = new Rect();
+        r.setWidth(getLocWidth()+getWidth());
+        r.setHeight(getLocHeight()+getHeight());
+        return r;
+    }
+    
+    boolean checkOverlap(Rect r){
+        
+        double lw = r.getLocWidth();
+        double lh = r.getLocHeight();
+        double absW = r.getAbsWH().getWidth();
+        double absH = r.getAbsWH().getHeight();
+        
+        double this_lw = getLocWidth();
+        double this_lh = getLocHeight();
+        double this_absW = getAbsWH().getWidth();
+        double this_absH = getAbsWH().getHeight();
+        
+        if(this_lw < lw && lw < this_absW &&
+           this_lh < lh && lh < this_absH){
+            //location corner is inside area
+            return true;
+        }
+        else if(this_lw < absW && absW < this_absW &&
+                this_lh < absH && absH < this_absH){
+            //absolute top left corner is inside area
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
 }

@@ -47,8 +47,8 @@ public class BinPacker {
         System.out.println("Please Enter Data");
         
         //set size of aluminum sheet
-        setWidth(scan.nextInt());
-        setHeight(scan.nextInt());
+        setWidth(scan.nextDouble());
+        setHeight(scan.nextDouble());
         
         //set number of tables
         int numTables = scan.nextInt();
@@ -109,7 +109,7 @@ public class BinPacker {
         tree.setChildren();
         System.out.println("finished setting children");
         
-        tree.pauseCmd();
+        //tree.pauseCmd();
         
         System.out.println("running tree");
         tree.runTree();

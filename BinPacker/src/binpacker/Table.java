@@ -45,9 +45,11 @@ public class Table {
             "----------------------------\n"
           + "Table: %s \n"
           + "Size: %.4f, %.4f \n"
+          + "Orient: %d\n"
           + "Price: %.2f \n"
           + "----------------------------\n",
-            name, size.getWidth(), size.getHeight(), price
+            name, size.getWidth(), size.getHeight(),
+            orientation, price
         )
         );
     }

@@ -142,8 +142,8 @@ public class Node {
             if(sizes.isEmpty()){
                 sizes.add(getEmptyRect(1, table, nodeSize));
                 sizes.add(getEmptyRect(2, table, nodeSize));
-                printSizes();
-                pauseCmd();
+                //printSizes();
+                //pauseCmd();
             }
                             
             int si_sz = sizes.size();
@@ -173,6 +173,9 @@ public class Node {
                 }
             }
             
+//            printNode();
+//            pauseCmd();
+            
             int ch_sz = children.size();
             for(int i = 0; i < ch_sz; i++){
                 children.get(i).setChildren();
@@ -194,19 +197,35 @@ public class Node {
             if(i != sizeItr){
                 Rect r = new Rect();
                 r.set(sizes.get(i));
+                r.setLoc(sizes.get(i).getLoc());
                 child.sizes.add(r);
             }
         }
         
+        boolean tbl_rmvd = false;
         int tb_sz = tableList.size();
         for(int i = 0; i < tb_sz; i++){
             if(!tableList.get(i).getName().equals(newTable.getName())){
                 child.tableList.add(tableList.get(i));
             }
+            else{
+                if(!tbl_rmvd){
+                    tbl_rmvd = true;
+                }
+                else{
+                    child.tableList.add(tableList.get(i));
+                }
+            }
         }
+        
         
         child.sizes.add(getEmptyRect(1, newTable, sizes.get(sizeItr)));
         child.sizes.add(getEmptyRect(2, newTable, sizes.get(sizeItr)));
+        
+        checkOverlap(child);
+        
+        child.printNode();
+        pauseCmd();
         
         children.add(child);
         
@@ -217,17 +236,17 @@ public class Node {
         Rect r = new Rect();
         
         if(firstOrSecond == 1){
-            r.setHeight(area.getHeight()- t.getHeight());
             r.setWidth(area.getWidth());
-            r.setLocHeight(area.getLocHeight() + t.getHeight());
+            r.setHeight(area.getHeight()- t.getHeight());
             r.setLocWidth(area.getLocWidth());
+            r.setLocHeight(area.getLocHeight() + t.getHeight());
             return r;
         }
         else if(firstOrSecond == 2){
             r.setWidth(area.getWidth() - t.getWidth());
             r.setHeight(area.getHeight());
-            r.setLocHeight(area.getLocHeight());
             r.setLocWidth(area.getLocWidth()+ t.getWidth());
+            r.setLocHeight(area.getLocHeight());
             return r;
         }
         else{
@@ -235,7 +254,22 @@ public class Node {
         }
     }
     
-
+    void checkOverlap(Node child){
+        Table t = child.table;
+        Rect tableLoc = new Rect();
+        tableLoc.setLoc(child.location);
+        tableLoc.set(t.getSize());
+        
+        int si_sz = child.sizes.size();
+        for(int i = 0; i < si_sz; i++){
+            if(child.sizes.get(i).checkOverlap(tableLoc)){
+                
+                System.out.println("Have Overlap");
+                
+                
+            }
+        }
+    }
 
 
 //GETTERS SETTERS
@@ -276,17 +310,21 @@ public class Node {
             "----------------------------\n"
           + "Node: \n"
           + "Table: %s\n"
+          + "  Orient: %d\n"
           + "Num Children: %d\n"
           + "Num of Sizes: %d\n"
           + "Location: %.4f, %.4f\n",
-            table.getName(), children.size(), sizes.size(),
+            table.getName(), table.getOrient(), children.size(), sizes.size(),
             location.getWidth(), location.getHeight()
         )
         );
         
         printTableList();
+        printSizes();
+        printChildren();
         
         System.out.print("----------------------------\n");
+        //pauseCmd();
     }
     void printTableList(){
         
@@ -320,6 +358,24 @@ public class Node {
         }
         else{
             System.out.print("Table Empty\n");
+        }
+        
+        System.out.print(
+            "----------------------------\n"
+        );
+    }
+    void printChildren(){
+        System.out.print(
+            "----------------------------\n"
+          + "Children:\n"
+        );
+        if(!children.isEmpty()){
+            for(Node n : children){
+                n.printNode();
+            }
+        }
+        else{
+            System.out.print("Node Has No Children\n");
         }
         
         System.out.print(
