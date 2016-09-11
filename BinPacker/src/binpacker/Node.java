@@ -262,7 +262,10 @@ public class Node {
         
         int si_sz = child.sizes.size();
         for(int i = 0; i < si_sz; i++){
-            if(child.sizes.get(i).checkOverlap(tableLoc)){
+            
+            Rect size = child.sizes.get(i);
+            
+            if(size.checkOverlap(tableLoc)){
                 
                 System.out.println("Have Overlap");
                 
