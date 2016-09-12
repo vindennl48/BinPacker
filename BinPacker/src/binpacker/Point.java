@@ -63,7 +63,14 @@ public class Point {
         x -= p.getX();
         y -= p.getY();
     }
-    
+    public boolean isEqual(Point p){
+        if(p.getX() == x && p.getY() == y){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     
     
 }

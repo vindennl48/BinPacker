@@ -20,7 +20,9 @@ public class BinPacker {
 
 /*############################################################################*/
     public static void main(String[] args) {
+        
         BinPacker bp = new BinPacker();
+        
         bp.getInfo();
         bp.run();
     }
@@ -28,16 +30,16 @@ public class BinPacker {
 /*############################################################################*/
     
 //start of BinPacker Class
-    
 //DATA
-    Node2 tree;
-    Table2 t;
+    List<Node> nodes;
+    List<Table> tables;
+    Rect plateSize;
     
 //CONSTRUCTOR
     public BinPacker(){
-        tree = new Node2();
-        tree.resetNumChildren();
-        t = new Table2();
+        nodes = new ArrayList<Node>();
+        tables = new ArrayList<Table>();
+        plateSize = new Rect();
     }
     
 //MEMBERS
@@ -47,8 +49,8 @@ public class BinPacker {
         System.out.println("Please Enter Data");
         
         //set size of aluminum sheet
-        setWidth(scan.nextDouble());
-        setHeight(scan.nextDouble());
+        plateSize.setWidth(scan.nextDouble());
+        plateSize.setHeight(scan.nextDouble());
         
         //set number of tables
         int numTables = scan.nextInt();
@@ -62,58 +64,72 @@ public class BinPacker {
             double tHeight = scan.nextDouble();
             double tPrice = scan.nextDouble();
             scan.nextLine();
-            
-            if(i == 0){
-                setFirstTable(tName, tWidth, tHeight, tPrice);
-            }
-            else{
-                addTable(tName, tWidth, tHeight, tPrice);
-            }
-            
+            addTable(tName, tWidth, tHeight, tPrice);
         }
     }
     
     void addTable(String newName, double newWidth, 
             double newHeight, double newPrice){
         
-        tree.tableList.add(
-            new Table2(
+        Rect size = new Rect();
+        size.setWidth(newWidth);
+        size.setHeight(newHeight);
+        
+        Table t = new Table(
                 newName,
+                size,
                 0,
-                newWidth,
-                newHeight,
                 newPrice
-            )
         );
-    }
-    
-    void setFirstTable(String newName, double newWidth, 
-            double newHeight, double newPrice){
-        tree.setTable(
-            new Table2(
-                newName, 0, newWidth, newHeight, newPrice
-            )
-        );
-    }
-    
-    void setWidth(double newWidth){
-        tree.setNodeSizeWidth(newWidth);
-    }
-    
-    void setHeight(double newHeight){
-        tree.setNodeSizeHeight(newHeight);
+        
+        tables.add(t);
     }
     
     void run(){
+        
+        System.out.println("Initializing Starting Nodes");
+        for(int i = 0; i < tables.size(); i++){
+            
+            Table t = new Table(tables.get(i));
+            
+            Node n = new Node(t);
+            n.setTables(tables);
+            n.removeTable(t.getName());
+            
+            Rect s1 = new Rect(
+                    0, 
+                    t.getP2().getY(),
+                    plateSize.getP2().getX(),
+                    plateSize.getP2().getY()
+            );
+            
+            Rect s2 = new Rect(
+                    t.getP2().getX(),
+                    0,
+                    plateSize.getP2().getX(),
+                    plateSize.getP2().getY()
+            );
+            
+            n.addEmptySpace(s1);
+            n.addEmptySpace(s2);
+            
+            nodes.add(n);
+            
+        }
+        System.out.println("Finished Initializing Starting Nodes\n");
+        
         System.out.println("setting children");
-        tree.setChildren();
-        System.out.println("finished setting children");
+        for(int i = 0; i < nodes.size(); i++){
+            nodes.get(i).makeChildren();
+        }
+        System.out.println("finished setting children\n");
         
-        //tree.pauseCmd();
+//        for(Node n : nodes){
+//            n.printNode();
+//        }
         
-        System.out.println("running tree");
-        tree.runTree();
-        System.out.println("finished running tree");
+//        System.out.println("running tree");
+//        tree.runTree();
+//        System.out.println("finished running tree\n");
     }
-
 }

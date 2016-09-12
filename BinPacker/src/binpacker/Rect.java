@@ -27,8 +27,8 @@ public class Rect {
         this.p2 = new Point(x2, y2);
     }
     public Rect(Rect r){
-        this.p1.set(r.getP1());
-        this.p2.set(r.getP2());
+        this.p1 = new Point(r.getP1());
+        this.p2 = new Point(r.getP2());
     }
     public Rect(){
         p1 = new Point();
@@ -140,9 +140,32 @@ public class Rect {
         return false;
         
     }
+    public boolean isInsideOrTouching(Point p){
+        
+        if (this.p1.getX() <= p.getX() && p.getX() <= this.p2.getX()){
+            if (this.p1.getY() <= p.getY() && p.getY() <= this.p2.getY()){
+                return true;
+            }
+        }
+        return false;
+        
+    }
+    
+    public boolean isInside(Rect r){
+        if(isInsideOrTouching(r.getP1()) &&
+           isInsideOrTouching(r.getP2())){
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean fits(Rect r){
+        return isInside(r);
+    }
     
     /*this returns the points of a given rectangle that are found inside this 
       rectangle. P1 = 1, P2, = 2, P3 = 4, P4 = 8 */
+    public static final int P1_ID = 1, P2_ID = 2, P3_ID = 4, P4_ID =8;
     public int pointsInside(Rect r){
         int out = 0;
         

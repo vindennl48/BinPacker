@@ -54,6 +54,10 @@ public class Table extends Rect {
     public String getPriceString(){
         return String.format("%.2f", price);
     }
+    public Rect getRect(){
+        Rect r = new Rect(getP1(), getP2());
+        return r;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -82,6 +86,19 @@ public class Table extends Rect {
         
     }
 
-    
+    public void print(){
+        System.out.print(
+        String.format(
+            "----------------------------\n"
+          + "Table: %s \n"
+          + "Size: %.4f, %.4f \n"
+          + "Orient: %d\n"
+          + "Price: %.2f \n"
+          + "----------------------------\n",
+            name, getWidth(), getHeight(),
+            rotation, price
+        )
+        );
+    }
     
 }
