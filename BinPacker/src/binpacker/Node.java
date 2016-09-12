@@ -20,6 +20,8 @@ public class Node extends Table{
     private List<Table> tables;
     private List<Node> children;
     private List<Rect> emptySpace;
+    private double branchValue;
+    private String tableOut;
     
     
 //CONSTRUCTORS
@@ -29,18 +31,24 @@ public class Node extends Table{
         tables = new ArrayList<Table>();
         children = new ArrayList<Node>();
         emptySpace = new ArrayList<Rect>();
+        branchValue = 0;
+        tableOut = "";
     }
     public Node(String name, Rect size, int rotation, double price){
         super(name, size, rotation, price);
         tables = new ArrayList<Table>();
         children = new ArrayList<Node>();
         emptySpace = new ArrayList<Rect>();
+        branchValue = 0;
+        tableOut = "";
     }
     public Node(Table t){
         super(t);
         tables = new ArrayList<Table>();
         children = new ArrayList<Node>();
         emptySpace = new ArrayList<Rect>();
+        branchValue = 0;
+        tableOut = "";
     }
     
     
@@ -110,6 +118,20 @@ public class Node extends Table{
         return deleted;
     }
     
+    public void setBranchValue(double newVal){
+        branchValue = newVal;
+    }
+    public double getBranchValue(){
+        return branchValue;
+    }
+    
+    public void setTableOut(String s){
+        tableOut = s;
+    }
+    public String getTableOut(){
+        return tableOut;
+    }
+    
     public int getEmptySpaceSize(){
         return emptySpace.size();
     }
@@ -151,6 +173,69 @@ public class Node extends Table{
         
         return deleted;
     }
+    
+    public int getChildListSize(){
+        return children.size();
+    }
+    public Node getChild(int itr){
+        Node n = new Node();
+        
+        if(!children.isEmpty()){
+            n.set(children.get(itr));
+        }
+        
+        return n;
+    }
+    public void addChild(Node n){
+        children.add(n);
+    }
+    public void makeChild(Table t){
+        
+        Node child = new Node(t);
+        
+        child.setTables(tables);
+        child.removeTable(t.getName());
+        
+        child.setEmptySpace(emptySpace);
+        
+        child.checkEmptySpace();
+        
+        children.add(child);
+    }
+    public void makeChildren(){
+        if(!emptySpace.isEmpty()){
+            for(int j = 0; j < emptySpace.size(); j++){
+                Rect empty = new Rect(emptySpace.get(j));
+
+                if(!tables.isEmpty()){
+                    for(int i = 0; i < tables.size(); i++){
+                        Table t1 = new Table(tables.get(i));
+                        t1.setLocation(empty.getLocation());
+                        
+                        Table t2 = new Table(tables.get(i));
+                        t2.rotate();
+                        t2.setLocation(empty.getLocation());
+
+                        if(empty.fits(t1.getRect())){
+                            makeChild(t1);
+                        }
+                        if(empty.fits(t2.getRect())){
+                            makeChild(t2);
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(!children.isEmpty()){
+            for(int i = 0; i < children.size(); i++){
+                children.get(i).makeChildren();
+            }
+        }
+    }
+    
+    
+//MEMBERS
     
     public void checkEmptySpace(){
         if(!emptySpace.isEmpty()){
@@ -260,68 +345,50 @@ public class Node extends Table{
             
         }
     }
-    
-    public int getChildListSize(){
-        return children.size();
-    }
-    public Node getChild(int itr){
-        Node n = new Node();
+    public void calculateBranchValue(){
         
-        if(!children.isEmpty()){
-            n.set(children.get(itr));
-        }
-        
-        return n;
-    }
-    public void addChild(Node n){
-        children.add(n);
-    }
-    public void makeChild(Table t){
-        
-        Node child = new Node(t);
-        
-        child.setTables(tables);
-        child.removeTable(t.getName());
-        
-        child.setEmptySpace(emptySpace);
-        
-        child.checkEmptySpace();
-        
-        children.add(child);
-    }
-    public void makeChildren(){
-        if(!emptySpace.isEmpty()){
-            for(int j = 0; j < emptySpace.size(); j++){
-                Rect empty = new Rect(emptySpace.get(j));
-
-                if(!tables.isEmpty()){
-                    for(int i = 0; i < tables.size(); i++){
-                        Table t1 = new Table(tables.get(i));
-                        t1.setLocation(empty.getLocation());
-                        
-                        Table t2 = new Table(tables.get(i));
-                        t2.rotate();
-                        t2.setLocation(empty.getLocation());
-
-                        if(empty.fits(t1.getRect())){
-                            makeChild(t1);
-                        }
-                        if(empty.fits(t2.getRect())){
-                            makeChild(t2);
-                        }
-                    }
-                }
-            }
-        }
+        double topValue = 0;
+        int itr = 0;
         
         if(!children.isEmpty()){
             for(int i = 0; i < children.size(); i++){
-                children.get(i).makeChildren();
+
+                Node n = children.get(i);
+
+                if(n.getBranchValue() == 0){
+                    n.calculateBranchValue();
+                }
+
+                if(n.getBranchValue() > topValue){
+                    topValue = n.getBranchValue();
+                    itr = i;
+                }
             }
+            
+            tableOut = String.format(
+                "%s: %.4f, %.4f | %.4f, %.4f | R: %d | Size: %.4f, %.4f\n",
+                getName(), getP1().getX(), getP1().getY(),
+                getP2().getX(),getP2().getY(), getRotation(),
+                getWidth(), getHeight()
+            );
+            tableOut += children.get(itr).getTableOut();
+            
+            setBranchValue(getPrice() + children.get(itr).getBranchValue());
+
         }
+        else{
+            setBranchValue(getPrice());
+            tableOut = String.format(
+                "%s: %.4f, %.4f | %.4f, %.4f | Size: %.4f, %.4f\n",
+                getName(), getP1().getX(), getP1().getY(),
+                getP2().getX(),getP2().getY(),
+                getWidth(), getHeight()
+            );
+        }
+        
     }
     
-//MEMBERS
+    //print functions
     public void printEmptySpace(){
         System.out.print(String.format(
             "############################\n"
@@ -415,6 +482,14 @@ public class Node extends Table{
             "----------------------------\n"
         );
     }
-    
+    public void printAnswer(){
+        System.out.print(String.format(
+                "=========================================\n"
+              + "%s\n"
+              + "Sales: $%.2f\n"
+              + "=========================================\n",
+                tableOut, branchValue
+        ));
+    }
     
 }

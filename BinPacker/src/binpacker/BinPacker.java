@@ -116,20 +116,31 @@ public class BinPacker {
             nodes.add(n);
             
         }
-        System.out.println("Finished Initializing Starting Nodes\n");
+        System.out.print("Finished Initializing Starting Nodes\n");
         
-        System.out.println("setting children");
+        System.out.print("Setting Children");
         for(int i = 0; i < nodes.size(); i++){
             nodes.get(i).makeChildren();
         }
-        System.out.println("finished setting children\n");
+        System.out.print("Finished Setting Children\n");
         
-//        for(Node n : nodes){
-//            n.printNode();
-//        }
         
-//        System.out.println("running tree");
-//        tree.runTree();
-//        System.out.println("finished running tree\n");
+        
+        System.out.print("Calculating Branch Values\n");
+        double finalVal = 0;
+        int itr = 0;
+        
+        for(int i = 0; i < nodes.size(); i ++){
+            Node n = nodes.get(i);
+            
+            n.calculateBranchValue();
+            if(n.getBranchValue() > finalVal){
+                finalVal = n.getBranchValue();
+                itr = i;
+            }
+        }
+        System.out.print("Finished Calculating Branch Values\n");
+        
+        nodes.get(itr).printAnswer();
     }
 }
