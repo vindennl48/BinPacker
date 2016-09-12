@@ -7,107 +7,81 @@ package binpacker;
 
 /**
  *
- * @author SHOP
+ * @author Mitch
  */
-public class Table {
-
+public class Table extends Rect {
+    
 //DATA
-    //if no table exists, name = "NULL"
     private String name;
-    private Rect size;
-    private int orientation;
+    private int rotation;
     private double price;
-
+    
     
 //CONSTRUCTORS
     public Table(){
-        setName("NULL");
-        setOrient(0);
-        size = new Rect();
-        setPrice(0);
+        super();
+        name = "NULL";
+        rotation = 0;
+        price = 0;
     }
-    public Table(String newName, int newOrient, double newWidth, 
-        double newHeight, double newPrice){
-        
-        size = new Rect();
-        
-        setName(newName);
-        setOrient(newOrient);
-        setSize(newWidth, newHeight);
-        setPrice(newPrice);
+    public Table(String name, Rect size, int rotation, double price){
+        super(size);
+        this.name = name;
+        this.rotation = rotation;
+        this.price = price;
     }
-
-
-//MEMBERS
-    public void print(){
-        System.out.print(
-        String.format(
-            "----------------------------\n"
-          + "Table: %s \n"
-          + "Size: %.4f, %.4f \n"
-          + "Orient: %d\n"
-          + "Price: %.2f \n"
-          + "----------------------------\n",
-            name, size.getWidth(), size.getHeight(),
-            orientation, price
-        )
-        );
-    }
-    public void invertSize(){
-        double newHeight = getWidth();
-        double newWidth = getHeight();
-        setWidth(newWidth);
-        setHeight(newHeight);
-        setOrient(90);
+    public Table(Table t){
+        super(t.getP1(), t.getP2());
+        this.name = t.getName();
+        this.rotation = t.getRotation();
+        this.price = t.getPrice();
     }
     
     
 //GETTERS SETTERS
-    public String getName(){
+    public String getName() {
         return name;
     }
-    public Rect getSize(){
-        return size;
+    public int getRotation() {
+        return rotation;
     }
-    public double getWidth(){
-        return size.getWidth();
+    public String getRotationString(){
+        return Integer.toString(rotation);
     }
-    public double getHeight(){
-        return size.getHeight();
-    }
-    public int getOrient(){
-        return orientation;
-    }
-    public double getPrice(){
+    public double getPrice() {
         return price;
     }
-    public void setName(String newName){
-        name = newName;
+    public String getPriceString(){
+        return String.format("%.2f", price);
     }
-    public void setSize(double newWidth, double newHeight){
-        size.setWidth(newWidth);
-        size.setHeight(newHeight);
+
+    public void setName(String name) {
+        this.name = name;
     }
-    public void setSize(Rect newSize){
-        setWidth(newSize.getWidth());
-        setHeight(newSize.getHeight());
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
     }
-    public void setWidth(double newWidth){
-        size.setWidth(newWidth);
+    public void setPrice(double price) {
+        this.price = price;
     }
-    public void setHeight(double newHeight){
-        size.setHeight(newHeight);
+    
+    
+//MEMBERS
+    public void rotate(){
+        if(rotation == 0){
+            rotation = 90;
+        }
+        else{
+            rotation = 0;
+        }
+        
+        this.setP2(
+            this.getP2().getY(),
+            this.getP2().getX()
+        );
+        
     }
-    public void setOrient(int newOrient){
-        orientation = newOrient;
-    }
-    public void setPrice(double newPrice){
-        price = newPrice;
-    }
-    public void set(Table t){
-        setName(t.getName());
-        setSize(t.getSize());
-        setOrient(t.getOrient());
-        setPrice(t.getPrice());
-    }
+
+    
+    
 }

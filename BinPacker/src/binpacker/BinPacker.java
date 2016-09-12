@@ -30,14 +30,14 @@ public class BinPacker {
 //start of BinPacker Class
     
 //DATA
-    Node tree;
-    Table t;
+    Node2 tree;
+    Table2 t;
     
 //CONSTRUCTOR
     public BinPacker(){
-        tree = new Node();
+        tree = new Node2();
         tree.resetNumChildren();
-        t = new Table();
+        t = new Table2();
     }
     
 //MEMBERS
@@ -77,7 +77,7 @@ public class BinPacker {
             double newHeight, double newPrice){
         
         tree.tableList.add(
-            new Table(
+            new Table2(
                 newName,
                 0,
                 newWidth,
@@ -90,7 +90,7 @@ public class BinPacker {
     void setFirstTable(String newName, double newWidth, 
             double newHeight, double newPrice){
         tree.setTable(
-            new Table(
+            new Table2(
                 newName, 0, newWidth, newHeight, newPrice
             )
         );
