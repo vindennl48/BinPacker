@@ -78,6 +78,15 @@ public class Node extends Table{
         }
     }
     
+    public Table getNodeTable(){
+        Table t = new Table(
+                this.getName(), 
+                this.getRect(), 
+                this.getRotation(), 
+                this.getPrice()
+        );
+        return t;
+    }
     public int getTableListSize(){
         return tables.size();
     }
@@ -190,7 +199,6 @@ public class Node extends Table{
         children.add(n);
     }
     public void makeChild(Table t){
-        
         Node child = new Node(t);
         
         child.setTables(tables);
@@ -217,11 +225,20 @@ public class Node extends Table{
                         t2.setLocation(empty.getLocation());
 
                         if(empty.fits(t1.getRect())){
+                            //System.out.println("yes t1");
                             makeChild(t1);
                         }
                         if(empty.fits(t2.getRect())){
+                            //System.out.println("yes t1");
                             makeChild(t2);
                         }
+                        
+//                        this.print("thistable");
+//                        empty.print("empty");
+//                        t1.print("t1");
+//                        t2.print("t2");
+//                        pauseCmd();
+                        
                     }
                 }
             }
@@ -237,118 +254,142 @@ public class Node extends Table{
     
 //MEMBERS
     
-    public void checkEmptySpace(){
-        if(!emptySpace.isEmpty()){
+    public boolean checkEmptySpace(){
+        if(!emptySpace.isEmpty())
+            return false;
+        
+        boolean intersecting = false;
+        int intersect_type = 0;
+        Table table = new Table(this.getNodeTable());
+        
+        for(int i = 0; i < emptySpace.size(); i++){
+            Rect empty = new Rect(emptySpace.get(i));
             
-            boolean ifOverlapped = false;
-            Rect exSp = new Rect();
-            
-            for(int i = 0;  i < emptySpace.size(); i++){
-                
-                Rect empty = new Rect(emptySpace.get(i));
-                
-                //if points p2 and p4 are inside
-                if(empty.pointsInside(this.getRect()) == P2_ID + P4_ID){
-                    ifOverlapped = true;
-                    
-                    //split intersecting empty space up
-                    Rect s1 = new Rect(
-                            empty.getP1().getX(),
-                            empty.getP1().getY(),
-                            empty.getP2().getX(),
-                            this.getP1().getY()
-                    );
-                    Rect s2 = new Rect(
-                            this.getP2().getX(),    //p1 x
-                            empty.getP1().getY(), //p1 y
-                            empty.getP2().getX(), //p2 x
-                            empty.getP2().getY()  //p2 y
-                    );
-                    
-                    this.removeEmptySpace(empty.getLocation());
-                    this.addEmptySpace(s1);
-                    this.addEmptySpace(s2);
-                    
-                    i = -1; //reset loop
-                    
-                }
-                else if(empty.pointsInside(this.getRect()) == P2_ID + P3_ID){
-                    ifOverlapped = true;
-                    
-                    //split intersecting empty space up
-                    Rect s1 = new Rect(
-                            empty.getP1().getX(),
-                            empty.getP1().getY(),
-                            this.getP2().getX(),
-                            empty.getP1().getY()
-                    );
-                    Rect s2 = new Rect(
-                            empty.getP2().getX(),    //p1 x
-                            this.getP1().getY(), //p1 y
-                            empty.getP2().getX(), //p2 x
-                            empty.getP2().getY()  //p2 y
-                    );
-                    
-                    this.removeEmptySpace(empty.getLocation());
-                    this.addEmptySpace(s1);
-                    this.addEmptySpace(s2);
-                    
-                    i = -1; //reset loop
-                    
-                }
-                else if(empty.getP1().isEqual(this.getP1())){
-                    
-                    Rect s1 = new Rect(empty);
-                    exSp.set(empty);
-                    
-                    if(this.getRotation() == 90){
-                        
-                        Point tP1 = new Point(this.getP1());
-                        
-                        tP1.setX(this.getP2().getX());
-                        
-                        s1.setP1(tP1);
-                        exSp = new Rect(
-                                this.getP2().getX(),
-                                empty.getP1().getY(),
-                                empty.getP2().getX(),
-                                empty.getP2().getY()
-                        );
-                    }
-                    else{
-                        
-                        Point tP1 = new Point(this.getP1());
-                        
-                        tP1.setY(this.getP2().getY());
-                        
-                        s1.setP1(tP1);
-                        exSp = new Rect(
-                                this.getP2().getX(),
-                                empty.getP1().getY(),
-                                empty.getP2().getX(),
-                                empty.getP2().getY()
-                        );
-                    }
-                    
-                    this.removeEmptySpace(empty.getLocation());
-                    this.addEmptySpace(s1);
-                    
-                    i = -1; //reset loop
-                    
-                }
-                
+            if(empty.pointsInside(table.getRect()) == P2_ID + P4_ID){
+                //0deg intersect
+                intersecting = true;
+                intersect_type = 1;
             }
-            
-            if(!ifOverlapped){
-                this.addEmptySpace(exSp);
+            if(empty.pointsInside(table.getRect()) == P2_ID + P3_ID){
+                //90deg intersect
+                intersecting = true;
+                intersect_type = 2;
             }
-            
         }
+        
+        fixSpace(intersecting, intersect_type);
+        
+        
+        return true;
     }
+    
+    public void fixSpace(boolean intersecting, int type){
+        Table table = new Table(this.getNodeTable());
+        
+        Rect e1 = new Rect();
+        Rect e2 = new Rect();
+        Rect e3 = new Rect();
+        
+        
+        for(int i = 0; i < emptySpace.size(); i++){
+            Rect empty = new Rect(emptySpace.get(i));
+            
+            if(empty.getP1().equals(table.getP1())){
+                //no intersect
+                if(intersecting && type == 1){
+                    //0deg intersect
+                    e1 = new Rect(
+                        table.getP3(),
+                        empty.getP2()
+                    );
+                }
+                else if(intersecting && type == 2){
+                    //90deg intersect
+                    e1 = new Rect(
+                        table.getP4(),
+                        empty.getP2()
+                    );
+
+                }
+                else if(!intersecting){
+                    //no intersect
+                    e1 = new Rect(
+                        table.getP3(),
+                        empty.getP2()
+                    );
+                    e2 = new Rect(
+                        table.getP4(),
+                        empty.getP2()
+                    );
+                }
+                
+                removeEmptySpace(empty.getLocation());
+                i = -1;
+            }
+            else if(empty.isInside(table.getP2())){
+                //intersected
+                if(intersecting && type == 1){
+                    //0deg intersect
+                    e2 = new Rect(
+                        new Point(
+                            table.getRight(),
+                            empty.getBottom()
+                        ),
+                        empty.getP2()
+                    );
+                    e3 = new Rect(
+                        empty.getP1(),
+                        new Point(
+                            empty.getRight(),
+                            table.getBottom()
+                        )
+                    );
+                }
+                else if(intersecting && type == 2){
+                    //90deg intersect
+                    e2 = new Rect(
+                        empty.getP1(),
+                        new Point(
+                            table.getLeft(),
+                            empty.getTop()
+                        )
+                    );
+                    e3 = new Rect(
+                        new Point(
+                            empty.getLeft(),
+                            table.getTop()
+                        ),
+                        empty.getP2()
+                    );
+                }
+                
+                removeEmptySpace(empty.getLocation());
+                i = -1;
+            }
+        }
+        
+        if(intersecting && type == 1){
+            addEmptySpace(e1);
+            addEmptySpace(e2);
+            addEmptySpace(e3);
+        }
+        else if(intersecting && type == 2){
+            addEmptySpace(e1);
+            addEmptySpace(e2);
+            addEmptySpace(e3);
+        }
+        else if(!intersecting){
+            addEmptySpace(e1);
+            addEmptySpace(e2);
+        }
+        
+        
+    }
+    
     public void calculateBranchValue(){
         
         double topValue = 0;
-        int itr = 0;
+        int itr = -1;
         
         if(!children.isEmpty()){
             for(int i = 0; i < children.size(); i++){
@@ -365,25 +406,38 @@ public class Node extends Table{
                 }
             }
             
+            //autocad format
             tableOut = String.format(
-                "%s: %.4f, %.4f | %.4f, %.4f | R: %d | Size: %.4f, %.4f\n",
-                getName(), getP1().getX(), getP1().getY(),
-                getP2().getX(),getP2().getY(), getRotation(),
-                getWidth(), getHeight()
+                "%.4f,%.4f\n%.4f,%.4f\n\n",
+                getP1().getX(), getP1().getY(),
+                getP2().getX(),getP2().getY()
             );
+//            tableOut = String.format(
+//                "%s: %.4f, %.4f | %.4f, %.4f | R: %d | Size: %.4f, %.4f\n",
+//                getName(), getP1().getX(), getP1().getY(),
+//                getP2().getX(),getP2().getY(), getRotation(),
+//                getWidth(), getHeight()
+//            );
             tableOut += children.get(itr).getTableOut();
             
             setBranchValue(getPrice() + children.get(itr).getBranchValue());
-
+            
         }
         else{
             setBranchValue(getPrice());
+            
+            //autocad format
             tableOut = String.format(
-                "%s: %.4f, %.4f | %.4f, %.4f | Size: %.4f, %.4f\n",
-                getName(), getP1().getX(), getP1().getY(),
-                getP2().getX(),getP2().getY(),
-                getWidth(), getHeight()
+                "%.4f,%.4f\n%.4f,%.4f\n\n",
+                getP1().getX(), getP1().getY(),
+                getP2().getX(),getP2().getY()
             );
+//            tableOut = String.format(
+//                "%s: %.4f, %.4f | %.4f, %.4f | Size: %.4f, %.4f\n",
+//                getName(), getP1().getX(), getP1().getY(),
+//                getP2().getX(),getP2().getY(),
+//                getWidth(), getHeight()
+//            );
         }
         
     }
@@ -485,7 +539,7 @@ public class Node extends Table{
     public void printAnswer(){
         System.out.print(String.format(
                 "=========================================\n"
-              + "%s\n"
+              + "Rectangle\n0,0\n48.5,72.5\n\n%s\n"
               + "Sales: $%.2f\n"
               + "=========================================\n",
                 tableOut, branchValue

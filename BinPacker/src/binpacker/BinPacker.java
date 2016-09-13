@@ -25,6 +25,9 @@ public class BinPacker {
         
         bp.getInfo();
         bp.run();
+
+        
+
     }
     
 /*############################################################################*/
@@ -85,40 +88,53 @@ public class BinPacker {
         tables.add(t);
     }
     
-    void run(){
-        
+    void initNodes(int rotation){
         System.out.println("Initializing Starting Nodes");
         for(int i = 0; i < tables.size(); i++){
             
             Table t = new Table(tables.get(i));
             
-            Node n = new Node(t);
-            n.setTables(tables);
-            n.removeTable(t.getName());
+            if(plateSize.fits(t)){
             
-            Rect s1 = new Rect(
-                    0, 
-                    t.getP2().getY(),
-                    plateSize.getP2().getX(),
-                    plateSize.getP2().getY()
-            );
+                if(rotation == 90){
+                    t.rotate();
+                }
+
+                Node n = new Node(t);
+                n.setTables(tables);
+                n.removeTable(t.getName());
+
+                Rect s1 = new Rect(
+                        0, 
+                        t.getP2().getY(),
+                        plateSize.getP2().getX(),
+                        plateSize.getP2().getY()
+                );
+
+                Rect s2 = new Rect(
+                        t.getP2().getX(),
+                        0,
+                        plateSize.getP2().getX(),
+                        plateSize.getP2().getY()
+                );
+
+                n.addEmptySpace(s1);
+                n.addEmptySpace(s2);
+
+                nodes.add(n);
             
-            Rect s2 = new Rect(
-                    t.getP2().getX(),
-                    0,
-                    plateSize.getP2().getX(),
-                    plateSize.getP2().getY()
-            );
-            
-            n.addEmptySpace(s1);
-            n.addEmptySpace(s2);
-            
-            nodes.add(n);
+            }
             
         }
         System.out.print("Finished Initializing Starting Nodes\n");
+    }
+    
+    void run(){
         
-        System.out.print("Setting Children");
+        initNodes(0);
+        initNodes(90);
+        
+        System.out.print("Setting Children\n");
         for(int i = 0; i < nodes.size(); i++){
             nodes.get(i).makeChildren();
         }
@@ -128,7 +144,7 @@ public class BinPacker {
         
         System.out.print("Calculating Branch Values\n");
         double finalVal = 0;
-        int itr = 0;
+        int itr = -1;
         
         for(int i = 0; i < nodes.size(); i ++){
             Node n = nodes.get(i);
@@ -141,6 +157,13 @@ public class BinPacker {
         }
         System.out.print("Finished Calculating Branch Values\n");
         
-        nodes.get(itr).printAnswer();
+//        for(Node n : nodes){
+//            n.printNode();
+//        }
+        
+        for(Node n : nodes){
+            n.printAnswer();
+        }
+        //nodes.get(itr).printAnswer();
     }
 }

@@ -102,6 +102,19 @@ public class Rect {
         return this.getSize().getY();
     }
     
+    public double getLeft(){
+        return this.getP1().getX();
+    }
+    public double getRight(){
+        return this.getP2().getX();
+    }
+    public double getTop(){
+        return this.getP2().getY();
+    }
+    public double getBottom(){
+        return this.getP1().getY();
+    }
+    
     public void setWidth(double width){
         this.p2.setX(
             this.p1.getX() + width
