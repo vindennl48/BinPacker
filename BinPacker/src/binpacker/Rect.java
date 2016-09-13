@@ -41,10 +41,16 @@ public class Rect {
         return topRight;
     }
     public Point getTopLeft(){
-        
+        return (new Point(btmLeft.getX(),topRight.getY()));
     }
     public Point getBtmRight(){
-        
+        return (new Point(topRight.getX(),btmLeft.getY()));
+    }
+    public double getWidth(){
+        return (topRight.getX() - btmLeft.getX());
+    }
+    public double getHeight(){
+        return (topRight.getY() - btmLeft.getY());
     }
     public void setBtmLeft(Point p){
         btmLeft.set(p);
@@ -76,13 +82,27 @@ public class Rect {
     }
     /*Returns True if 'this.Rect' is Inside of Rect r*/
     public boolean isInsideOf(Rect r){
-        if(r.getBtmLeft().getX() < btmLeft.getX() && btmLeft.getX() < r.getTopRight().getX() &&
-           r.getBtmLeft().getX() < topRight.getX() && topRight.getX() < r.getTopRight().getX() &&
-           r.getBtmLeft().getY()< btmLeft.getY()&& btmLeft.getY()< r.getTopRight().getY() &&
-           r.getBtmLeft().getY()< topRight.getY()&& topRight.getY()< r.getTopRight().getY()){
+        if(r.getBtmLeft().getX() <= btmLeft.getX() && btmLeft.getX() <= r.getTopRight().getX() &&
+           r.getBtmLeft().getX() <= topRight.getX() && topRight.getX() <= r.getTopRight().getX() &&
+           r.getBtmLeft().getY()<= btmLeft.getY()&& btmLeft.getY()<= r.getTopRight().getY() &&
+           r.getBtmLeft().getY()<= topRight.getY()&& topRight.getY()<= r.getTopRight().getY()){
             return true;
         }
         return false;
+    }
+    
+    public void printRect(String name){
+        System.out.print(String.format(
+            "---------------------------\n"
+          + "Name: %s\n"
+          + "BtmLeft: %.4f, %.4f\n"
+          + "TopRight: %.4f, %.4f\n"
+          + "---------------------------\n",
+            name,
+            btmLeft.getX(),btmLeft.getY(),
+            topRight.getX(), topRight.getY()
+          
+        ));
     }
     
 }

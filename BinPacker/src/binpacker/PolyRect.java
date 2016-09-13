@@ -18,16 +18,13 @@ import java.util.logging.Logger;
 public class PolyRect {
 //DATA
     private Rect env;
-    private List<Rect> fullSpace;
+    private List<Table> fullSpace;
     
     
 //CONSTRUCTORS
     private void init(){
         env = new Rect();
         fullSpace = new ArrayList<>();
-    }
-    PolyRect(){
-        init();
     }
     PolyRect(Rect env){
         init();
@@ -42,19 +39,19 @@ public class PolyRect {
     public void setEnv(Rect r){
         env.set(r);
     }
-    public boolean addFullSpace(Rect r){
-        if(checkSpace(r)){
-            fullSpace.add(r);
+    public boolean addFullSpace(Table t){
+        if(checkSpace(t.getRect())){
+            fullSpace.add(t);
             return true;
         }
         return false;
     }
-    public void setFullSpace(List<Rect> rList){
+    public void setFullSpace(List<Table> tList){
         fullSpace.clear();
-        for(Rect r : rList){
-            Rect rNew = new Rect();
-            rNew.set(r);
-            fullSpace.add(r);
+        for(Table t : tList){
+            Table tNew = new Table();
+            tNew.set(t);
+            fullSpace.add(tNew);
         }
     }
     public void set(PolyRect p){
@@ -69,8 +66,9 @@ public class PolyRect {
             return newRect.isInsideOf(env);
         }
         else{
-            for(Rect r : fullSpace){
-                if (newRect.isOntopOf(r) || newRect.isInsideOf(r) || 
+            for(Table t : fullSpace){
+                if (newRect.isOntopOf(t.getRect()) || 
+                    newRect.isInsideOf(t.getRect()) || 
                     !newRect.isInsideOf(env)){
 
 //                //throw a fit
@@ -90,6 +88,21 @@ public class PolyRect {
         } catch (IOException ex) {
             Logger.getLogger(PolyRect.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void printPolyRect(){
+        System.out.println("---------------------");
+        System.out.println("PolyRect: ");
+        System.out.println(String.format("env: %.4f, %.4f | %.4f, %.4f", 
+                env.getBtmLeft().getX(), env.getBtmLeft().getY(),
+                env.getTopRight().getX(), env.getTopRight().getY()));
+        System.out.println("    -----------------");
+        System.out.println("fullSpace: ");
+        for(Table t : fullSpace){
+            t.printTable();
+        }
+        System.out.println("    -----------------");
+        System.out.println("---------------------");
     }
     
 }

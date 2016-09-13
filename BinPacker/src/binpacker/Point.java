@@ -59,5 +59,12 @@ public class Point {
         return false;
     }
     
+    public void printPoint(){
+        System.out.println(String.format(
+              "Point: \n"
+            + "x: %.4f, y: %.4f",
+                x,y
+        ));
+    }
     
 }
