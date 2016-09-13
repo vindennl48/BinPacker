@@ -75,27 +75,18 @@ public class Frame {
         }
     }
     public boolean removeTable(Table t){
-        System.out.println("Removing Table");
         
         if(tables.isEmpty()){
-            System.out.println("False1");
-            pauseCmd();
             return false;
         }
         
         for(int i = 0; i < tables.size(); i++){
             if(tables.get(i).name.equals(t.name)){
                 tables.remove(i);
-                System.out.println("True1");
-                for(Table tt : tables){
-                    tt.printTable();
-                }
-                pauseCmd();
+                System.out.println("found tables");
                 return true;
             }
         }
-        System.out.println("False2");
-        pauseCmd();
         return false;
     }
     public void setTables(List<Table> tList){
@@ -149,12 +140,7 @@ public class Frame {
             if(f1.tryTable(t1, new Point(0,0)))
                 f1.addTable(t1, new Point(0,0));
             
-            System.out.println("argh");
-            f1.printFrame();
-            System.out.println("argh");
-            
             Tree.add(f1);
-            
             
             //90deg
             Table t2 = new Table();
