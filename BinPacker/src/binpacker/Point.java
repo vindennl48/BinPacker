@@ -52,4 +52,12 @@ public class Point {
     
     
 //MEMBERS
+    public boolean isEqualTo(Point p){
+        if(x == p.getX() && y == p.getY())
+            return true;
+
+        return false;
+    }
+    
+    
 }

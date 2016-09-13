@@ -40,6 +40,12 @@ public class Rect {
     public Point getTopRight(){
         return topRight;
     }
+    public Point getTopLeft(){
+        
+    }
+    public Point getBtmRight(){
+        
+    }
     public void setBtmLeft(Point p){
         btmLeft.set(p);
     }

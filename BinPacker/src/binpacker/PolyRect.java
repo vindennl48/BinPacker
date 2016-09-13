@@ -42,28 +42,46 @@ public class PolyRect {
     public void setEnv(Rect r){
         env.set(r);
     }
-    public void addFullSpace(Rect r){
+    public boolean addFullSpace(Rect r){
         if(checkSpace(r)){
             fullSpace.add(r);
+            return true;
         }
+        return false;
+    }
+    public void setFullSpace(List<Rect> rList){
+        fullSpace.clear();
+        for(Rect r : rList){
+            Rect rNew = new Rect();
+            rNew.set(r);
+            fullSpace.add(r);
+        }
+    }
+    public void set(PolyRect p){
+        setFullSpace(p.fullSpace);
+        this.env = p.env;
     }
     
     
 //MEMBERS
     public boolean checkSpace(Rect newRect){
-        for(Rect r : fullSpace){
-            if (newRect.isOntopOf(r) || newRect.isInsideOf(r) || 
-                !newRect.isInsideOf(env)){
-                
-                //throw a fit
+        if(fullSpace.isEmpty()){
+            return newRect.isInsideOf(env);
+        }
+        else{
+            for(Rect r : fullSpace){
+                if (newRect.isOntopOf(r) || newRect.isInsideOf(r) || 
+                    !newRect.isInsideOf(env)){
+
+//                //throw a fit
 //                System.out.println("Error in: "
 //                        + "PolyRect.checkSpace(Rect newRect)");
 //                pauseCmd();
-                return false;
+                    return false;
+                }
             }
+            return true;
         }
-        
-        return true;
     }
     void pauseCmd(){
         System.out.print("\n\n\nPress Enter To Continue...\n\n");
