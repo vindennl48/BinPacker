@@ -72,6 +72,22 @@ public class Frame {
         
         return false;
     }
+    public boolean tryTableTemp(Table t, Point p,int i){
+        
+        if(placePoints.isEmpty())
+            return false;
+        
+        Table t2 = new Table();
+        t2.set(t);
+
+        t2.setOrigin(p);
+        if(i == 1)
+            t2.printTable();
+        if (emptySpace.checkSpace(t2.getRect()))
+            return true;
+        
+        return false;
+    }
     public boolean addTable(Table t, Point p){
         
         Table tNew = new Table();
@@ -211,43 +227,58 @@ public class Frame {
                     t2.rotate();
                     
                     if(f2.tryTable(t2, p)){
-                        f2.addTable(t2, p);
-                        Tree.add(f2);
+                        if(count != 3 || tcount != 1){
+                            f2.addTable(t2, p);
+                            Tree.add(f2);
+                            tcount++;
+                        }
+                        else{
+                            f2.tryTableTemp(t2, p, 1);
+                            tcount++;
+                        }
                     }
+//                    else if(count == 3 && tcount == 1){
+//                        boolean isn = f2.tryTable(t2, p);
+//                        System.out.println(Boolean.toString(isn));
+//                        pauseCmd();
+//                        tcount++;
+//                    }
+                    
+                    if(count == 3 && tcount == 2){
+                        p.printPoint();
+                        t2.setOrigin(p);
+                        t2.printACAD(0);
+                        f.printFrameACAD();
+                        f.printPlacePointsACAD();
+                        pauseCmd();
+                    }
+                    
                 }
             }
         }
-        
-        
-//        if(count == 3){
-//            printTreeACAD(1);
-//            Tree.get(1).printPlacePointsACAD();
-//            pauseCmd();
-//        }
-        
         count++;
         
-        double xoffset = 0;
-        
-        if(Tree.isEmpty())
-            System.out.println("Tree is Empty");
-        for(Frame f : Tree){
-            System.out.print(String.format(
-                    "rectangle\n"
-                  + "%.4f,%.4f\n"
-                  + "%.4f,%.4f\n",
-                    env.getBtmLeft().getX() + xoffset,
-                    env.getBtmLeft().getY() + yoffset,
-                    env.getTopRight().getX() + xoffset,
-                    env.getTopRight().getY() + yoffset
-            ));
-            for(Table t : f.emptySpace.fullSpace){
-                t.printACAD(xoffset,yoffset);
-            }
-            xoffset += 50;
-            System.out.println("");
-        }
-        yoffset+=80;
+//        double xoffset = 0;
+//        
+//        if(Tree.isEmpty())
+//            System.out.println("Tree is Empty");
+//        for(Frame f : Tree){
+//            System.out.print(String.format(
+//                    "rectangle\n"
+//                  + "%.4f,%.4f\n"
+//                  + "%.4f,%.4f\n",
+//                    env.getBtmLeft().getX() + xoffset,
+//                    env.getBtmLeft().getY() + yoffset,
+//                    env.getTopRight().getX() + xoffset,
+//                    env.getTopRight().getY() + yoffset
+//            ));
+//            for(Table t : f.emptySpace.fullSpace){
+//                t.printACAD(xoffset,yoffset);
+//            }
+//            xoffset += 50;
+//            System.out.println("");
+//        }
+//        yoffset+=80;
         
         //printTreeACAD();
         //pauseCmd();
@@ -301,6 +332,29 @@ public class Frame {
                     p.getX(),p.getY()
             ));
         }
+    }
+    
+    public void printFrameACAD(){
+        
+        Frame f = new Frame(this);
+        
+        double offset = 0;
+        
+        System.out.print(String.format(
+                "rectangle\n"
+              + "%.4f,%.4f\n"
+              + "%.4f,%.4f\n",
+                env.getBtmLeft().getX() + offset,
+                env.getBtmLeft().getY(),
+                env.getTopRight().getX() + offset,
+                env.getTopRight().getY()
+        ));
+        for(Table t : f.emptySpace.fullSpace){
+            t.printACAD(offset);
+        }
+        offset += 50;
+        System.out.println("");
+        
     }
     
     public void printTreeACAD(int itr){
