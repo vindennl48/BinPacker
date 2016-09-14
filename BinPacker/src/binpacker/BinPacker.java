@@ -20,16 +20,23 @@ public class BinPacker {
      */
     public static void main(String[] args) {
         
-//        Rect small = new Rect(0,0,39.7654,24.0172);
-//        Rect big = new Rect(0,0,48.5,72.5);
+//        Rect small = new Rect(0,0,20.0802,31.8913);
+//        Rect big = new Rect(0,0,24.0172,39.7654);
+//        
+////        20.0802,31.8913
+////
+////        24.0172,39.7654
 //        
 //        if(small.isInsideOf(big))
 //            System.out.println("true");
 //        else
 //            System.out.println("false");
+//        
+//        if(small.isOntopOf(big))
+//            System.out.println("true");
+//        else
+//            System.out.println("false");
         
-//        t: 39.7654, 24.0172
-//        p: 0.0000, 0.0000
         
         getInfo();
         run();

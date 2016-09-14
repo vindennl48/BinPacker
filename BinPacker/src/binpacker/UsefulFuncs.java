@@ -14,6 +14,9 @@ import java.util.logging.Logger;
  * @author SHOP
  */
 public class UsefulFuncs {
+    
+    static int madeItCount = 0;
+    
     static void pauseCmd(){
         System.out.print("\n\nPaused: Press Enter To Continue...\n\n");
         try {
@@ -21,5 +24,14 @@ public class UsefulFuncs {
         } catch (IOException ex) {
             Logger.getLogger(UsefulFuncs.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    static void madeIt(){
+        System.out.println("Made it to: " + madeItCount);
+        madeItCount++;
+    }
+    static void madeIt(String a){
+        System.out.println("Made it to: " + a + " " + madeItCount);
+        madeItCount++;
     }
 }

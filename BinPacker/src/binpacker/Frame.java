@@ -5,6 +5,7 @@
  */
 package binpacker;
 
+import static binpacker.UsefulFuncs.madeIt;
 import static binpacker.UsefulFuncs.pauseCmd;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,16 @@ public class Frame {
     
 
 //GETTERS SETTERS
+    public boolean addPlacePoint(Point pNew){
+        //search for existing placepoint
+        for(Point p : placePoints){
+            if(p.isEqualTo(pNew)){
+               return false; 
+            }
+        }
+        placePoints.add(pNew);
+        return true;
+    }
     public boolean tryTable(Table t, Point p){
         
         if(placePoints.isEmpty())
@@ -61,7 +72,7 @@ public class Frame {
         
         return false;
     }
-    public void addTable(Table t, Point p){
+    public boolean addTable(Table t, Point p){
         
         Table tNew = new Table();
         tNew.set(t);
@@ -70,9 +81,12 @@ public class Frame {
         if(emptySpace.addFullSpace(tNew)){
             removeTable(tNew);
             removePlacePoint(p);
-            placePoints.add(tNew.size.getTopLeft());
-            placePoints.add(tNew.size.getBtmRight());
+            addPlacePoint(tNew.size.getBtmRight());
+            addPlacePoint(tNew.size.getTopLeft());
+            
+            return true;
         }
+        return false;
     }
     public boolean removeTable(Table t){
         
@@ -83,7 +97,6 @@ public class Frame {
         for(int i = 0; i < tables.size(); i++){
             if(tables.get(i).name.equals(t.name)){
                 tables.remove(i);
-                System.out.println("found tables");
                 return true;
             }
         }
@@ -137,10 +150,12 @@ public class Frame {
             Frame f1 = new Frame(env);
             f1.setTables(TableMasterList);
             
-            if(f1.tryTable(t1, new Point(0,0)))
+            if(f1.tryTable(t1, new Point(0,0))){
                 f1.addTable(t1, new Point(0,0));
             
-            Tree.add(f1);
+                Tree.add(f1);
+            
+            }
             
             //90deg
             Table t2 = new Table();
@@ -148,21 +163,23 @@ public class Frame {
             t2.rotate();
             
             Frame f2 = new Frame(env);
-            f1.setTables(TableMasterList);
+            f2.setTables(TableMasterList);
             
-            if(f2.tryTable(t2, new Point(0,0)))
+            if(f2.tryTable(t2, new Point(0,0))){
                 f2.addTable(t2, new Point(0,0));
-            
-            Tree.add(f2);
-            
+                
+                Tree.add(f2);
+                
+            }
         }
-        printTree();
-        pauseCmd();
     }
+    
+    
+    //temp
+    static int count = 0;
+    static int yoffset = 0;
+    
     public void runTree(){
-        
-        System.out.println("Hey");
-        
         List<Frame> temp_tree = new ArrayList<>();
         
         for(Frame f : Tree){
@@ -171,48 +188,78 @@ public class Frame {
         }
         
         Tree.clear();
+        int tcount = 0;
         
         for(Frame f : temp_tree){
             
-            if(f.placePoints.isEmpty())
-                break;
-            
             for(Point p : f.placePoints){
-                
                 if(f.tables.isEmpty())
                     break;
-                
-                for(int i = 0; i < tables.size(); i++){
+                for(Table t : f.tables){
                     
-                    Table t1 = new Table();
-                    t1.set(f.tables.get(i));
+                    Frame f1 = new Frame(f);
+                    Table t1 = new Table(t);
                     
-                    if(f.tryTable(t1, p)){
-                        f.addTable(t1, p);
-                        i = -1;
+                    if(f1.tryTable(t1, p)){
+                        f1.addTable(t1, p);
+                        Tree.add(f1);
+                        tcount++;
                     }
                     
-                    Table t2 = new Table();
-                    t2.set(f.tables.get(i));
+                    Frame f2 = new Frame(f);
+                    Table t2 = new Table(t);
                     t2.rotate();
                     
-                    if(f.tryTable(t2, p)){
-                        f.addTable(t2, p);
-                        i = -1;
+                    if(f2.tryTable(t2, p)){
+                        f2.addTable(t2, p);
+                        Tree.add(f2);
                     }
-                    
                 }
-                
             }
-            
         }
+        
+        
+//        if(count == 3){
+//            printTreeACAD(1);
+//            Tree.get(1).printPlacePointsACAD();
+//            pauseCmd();
+//        }
+        
+        count++;
+        
+        double xoffset = 0;
+        
+        if(Tree.isEmpty())
+            System.out.println("Tree is Empty");
+        for(Frame f : Tree){
+            System.out.print(String.format(
+                    "rectangle\n"
+                  + "%.4f,%.4f\n"
+                  + "%.4f,%.4f\n",
+                    env.getBtmLeft().getX() + xoffset,
+                    env.getBtmLeft().getY() + yoffset,
+                    env.getTopRight().getX() + xoffset,
+                    env.getTopRight().getY() + yoffset
+            ));
+            for(Table t : f.emptySpace.fullSpace){
+                t.printACAD(xoffset,yoffset);
+            }
+            xoffset += 50;
+            System.out.println("");
+        }
+        yoffset+=80;
+        
+        //printTreeACAD();
+        //pauseCmd();
         
         if(!Tree.isEmpty())
             runTree();
-        else
+        else{
             setTree(temp_tree);
-        
-        printTree();
+            //printTree();
+            //printTreeACAD();
+        }
+
     }
     
     public void printFrame(){
@@ -237,9 +284,70 @@ public class Frame {
         
     }
     public void printTree(){
+        if(Tree.isEmpty())
+            System.out.println("Tree is Empty");
         for(Frame f : Tree){
             f.printFrame();
         }
     }
     
+    public void printPlacePointsACAD(){
+        for(Point p : placePoints){
+            System.out.print(String.format(
+                    "circle\n"
+                  + "%.4f,%.4f\n"
+                  + "d\n"
+                  + "1\n",
+                    p.getX(),p.getY()
+            ));
+        }
+    }
+    
+    public void printTreeACAD(int itr){
+        
+        double offset = 0;
+        
+        if(Tree.isEmpty())
+            System.out.println("Tree is Empty");
+        
+        Frame f = new Frame(Tree.get(itr));
+        System.out.print(String.format(
+                "rectangle\n"
+              + "%.4f,%.4f\n"
+              + "%.4f,%.4f\n",
+                env.getBtmLeft().getX() + offset,
+                env.getBtmLeft().getY(),
+                env.getTopRight().getX() + offset,
+                env.getTopRight().getY()
+        ));
+        for(Table t : f.emptySpace.fullSpace){
+            t.printACAD(offset);
+        }
+        offset += 50;
+        System.out.println("");
+        
+    }
+    public void printTreeACAD(){
+        
+        double offset = 0;
+        
+        if(Tree.isEmpty())
+            System.out.println("Tree is Empty");
+        for(Frame f : Tree){
+            System.out.print(String.format(
+                    "rectangle\n"
+                  + "%.4f,%.4f\n"
+                  + "%.4f,%.4f\n",
+                    env.getBtmLeft().getX() + offset,
+                    env.getBtmLeft().getY(),
+                    env.getTopRight().getX() + offset,
+                    env.getTopRight().getY()
+            ));
+            for(Table t : f.emptySpace.fullSpace){
+                t.printACAD(offset);
+            }
+            offset += 50;
+            System.out.println("");
+        }
+    }
 }

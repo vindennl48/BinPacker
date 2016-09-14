@@ -17,8 +17,8 @@ import java.util.logging.Logger;
  */
 public class PolyRect {
 //DATA
-    private Rect env;
-    private List<Table> fullSpace;
+    Rect env;
+    List<Table> fullSpace;
     
     
 //CONSTRUCTORS
@@ -67,16 +67,12 @@ public class PolyRect {
         }
         else{
             for(Table t : fullSpace){
-                if (newRect.isOntopOf(t.getRect()) || 
-                    newRect.isInsideOf(t.getRect()) || 
-                    !newRect.isInsideOf(env)){
-
-//                //throw a fit
-//                System.out.println("Error in: "
-//                        + "PolyRect.checkSpace(Rect newRect)");
-//                pauseCmd();
+                if (newRect.isOntopOf(t.getRect()))
                     return false;
-                }
+                if (newRect.isInsideOf(t.getRect()))
+                    return false;
+                if (!newRect.isInsideOf(env))
+                    return false;
             }
             return true;
         }

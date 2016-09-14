@@ -26,6 +26,10 @@ public class Table {
     Table(){
         init();
     }
+    Table(Table t){
+        init();
+        this.set(t);
+    }
 
 //GETTERS SETTERS
     public Rect getRect(){
@@ -40,14 +44,17 @@ public class Table {
 
 //MEMBERS
     public void setOrigin(Point p){
-        double width = (size.getBtmRight().getX() - size.getBtmLeft().getX());
-        double height = (size.getTopLeft().getY() - size.getBtmLeft().getY());
+        double width = (size.getTopRight().getX() - size.getBtmLeft().getX());
+        double height = (size.getTopRight().getY() - size.getBtmLeft().getY());
         
         size.setBtmLeft(p);
         size.setTopRight(new Point(
                 width + p.getX(),
                 height + p.getY()
         ));
+    }
+    public void setOriginTopRight(){
+        
     }
     public void rotate(){
         double topRightX = size.getTopRight().getX();
@@ -83,6 +90,28 @@ public class Table {
             price
         )
         );
+    }
+    public void printACAD(double offset){
+        System.out.print(String.format(
+              "rectangle\n"
+            + "%.4f,%.4f\n"
+            + "%.4f,%.4f\n",
+                size.getBtmLeft().getX() + offset,
+                size.getBtmLeft().getY(),
+                size.getTopRight().getX() + offset,
+                size.getTopRight().getY()
+        ));
+    }
+    public void printACAD(double offsetX, double offsetY){
+        System.out.print(String.format(
+              "rectangle\n"
+            + "%.4f,%.4f\n"
+            + "%.4f,%.4f\n",
+                size.getBtmLeft().getX() + offsetX,
+                size.getBtmLeft().getY() + offsetY,
+                size.getTopRight().getX() + offsetX,
+                size.getTopRight().getY() + offsetY
+        ));
     }
     
 }

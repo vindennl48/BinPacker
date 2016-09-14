@@ -58,6 +58,13 @@ public class Point {
 
         return false;
     }
+    public boolean isInsideOf(Rect r){
+        if(r.getBtmLeft().getX() <= (x+1) && (x+1) <= r.getTopRight().getX() &&
+           r.getBtmLeft().getY() <= (y+1) && (y+1) <= r.getTopRight().getY()){
+            return true;
+        }
+        return false;
+    }
     
     public void printPoint(){
         System.out.println(String.format(
