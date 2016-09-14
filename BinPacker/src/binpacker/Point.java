@@ -62,9 +62,9 @@ public class Point {
 
         return false;
     }
-    public boolean isInsideOf(Rect2 r){
-        if(r.getBtmLeft().getX() < x && x < r.getTopRight().getX() &&
-           r.getBtmLeft().getY() < y && y < r.getTopRight().getY()){
+    public boolean isInsideOf(Rect r){
+        if(r.getBL().getX() < x && x < r.getTR().getX() &&
+           r.getBL().getY() < y && y < r.getTR().getY()){
             return true;
         }
         return false;

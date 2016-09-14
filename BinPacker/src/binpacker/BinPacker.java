@@ -85,14 +85,14 @@ public class BinPacker {
         
         System.out.println("Please Enter Data");
         
-        Rect2 r = new Rect2();
+        Rect r = new Rect();
         Point p = new Point();
         
         //set size of aluminum sheet
         p.setX(scan.nextDouble());
         p.setY(scan.nextDouble());
         
-        r.setTopRight(p);
+        r.setTR(p);
         
         MainNode = new Frame(r);
         
@@ -127,14 +127,14 @@ public class BinPacker {
         
         System.out.println("Please Enter Data");
         
-        Rect2 r = new Rect2();
+        Rect r = new Rect();
         Point p = new Point();
         
         //set size of aluminum sheet
         p.setX(scan.nextDouble());
         p.setY(scan.nextDouble());
         
-        r.setTopRight(p);
+        r.setTR(p);
         
         MainNode = new Frame(r);
         

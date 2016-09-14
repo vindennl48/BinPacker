@@ -173,7 +173,6 @@ public class Frame {
                 f1.addTable(t1, new Point(0,0));
             
                 Tree.add(f1);
-            
             }
             
             //90deg
@@ -188,8 +187,10 @@ public class Frame {
                 f2.addTable(t2, new Point(0,0));
                 
                 Tree.add(f2);
-                
             }
+            
+            
+            
         }
     }
     
