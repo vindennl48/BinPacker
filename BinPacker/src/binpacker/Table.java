@@ -9,68 +9,53 @@ package binpacker;
  *
  * @author Mitch
  */
-public class Table {
+public class Table extends Rect {
 //DATA
-    String name;
-    Rect size;
-    double price;
-    boolean rotation;
+    private String name;
+    private double price;
 
 //CONSTRUCTORS
     private void init(){
         name = "";
-        size = new Rect();
         price = 0;
-        rotation = false;
     }
     Table(){
+        super();
         init();
     }
     Table(Table t){
+        super();
         init();
-        this.set(t);
+        setTable(t);
     }
 
 //GETTERS SETTERS
-    public Rect getRect(){
-        return size;
+    public String getName(){
+        return name;
     }
-    public void set(Table t){
-        name = t.name;
-        size.set(t.getRect());
-        price = t.price;
-        rotation = t.rotation;
+    public double getPrice(){
+        return price;
     }
-
-//MEMBERS
-    public void setOrigin(Point p){
-        double width = (size.getTopRight().getX() - size.getBtmLeft().getX());
-        double height = (size.getTopRight().getY() - size.getBtmLeft().getY());
-        
-        size.setBtmLeft(p);
-        size.setTopRight(new Point(
-                width + p.getX(),
-                height + p.getY()
-        ));
-    }
-    public void setOriginTopRight(){
-        
-    }
-    public void rotate(){
-        double topRightX = size.getTopRight().getX();
-        double topRightY = size.getTopRight().getY();
-        
-        size.setTopRight(new Point(
-                topRightY,
-                topRightX
-        ));
-        
-        if(!rotation)
-            rotation = true;
-        else
-            rotation = false;
+    public Rect getSize(){
+        return getRect();
     }
     
+    public void setName(String name){
+        this.name = name;
+    }
+    public void setPrice(double price){
+        this.price = price;
+    }
+    public void setTable(Table t){
+        name = t.name;
+        setSize(t.getSize());
+        price = t.price;
+    }
+    public void setSize(Rect r){
+        setRect(r);
+    }
+
+//MEMBERS    
     public void printTable(){
         System.out.print(
         String.format(
@@ -82,35 +67,35 @@ public class Table {
           + "Price: %.2f \n"
           + "----------------------------\n",
             name, 
-            size.getBtmLeft().getX(), 
-            size.getBtmLeft().getY(),
-            size.getTopRight().getX(),
-            size.getTopRight().getY(),
-            Boolean.toString(rotation), 
+            getBL().getX(), 
+            getBL().getY(),
+            getTR().getX(),
+            getTR().getY(),
+            Boolean.toString(getRotation()), 
             price
         )
         );
     }
-    public void printACAD(double offset){
+    public void printTableACAD(){
         System.out.print(String.format(
               "rectangle\n"
             + "%.4f,%.4f\n"
             + "%.4f,%.4f\n",
-                size.getBtmLeft().getX() + offset,
-                size.getBtmLeft().getY(),
-                size.getTopRight().getX() + offset,
-                size.getTopRight().getY()
+                getBL().getX(),
+                getBL().getY(),
+                getTR().getX(),
+                getTR().getY()
         ));
     }
-    public void printACAD(double offsetX, double offsetY){
+    public void printTableACAD(double offsX, double offsY){
         System.out.print(String.format(
               "rectangle\n"
             + "%.4f,%.4f\n"
             + "%.4f,%.4f\n",
-                size.getBtmLeft().getX() + offsetX,
-                size.getBtmLeft().getY() + offsetY,
-                size.getTopRight().getX() + offsetX,
-                size.getTopRight().getY() + offsetY
+                getBL().getX() + offsX,
+                getBL().getY() + offsY,
+                getTR().getX() + offsX,
+                getTR().getY() + offsY
         ));
     }
     

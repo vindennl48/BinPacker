@@ -9,6 +9,7 @@ import static binpacker.UsefulFuncs.madeIt;
 import static binpacker.UsefulFuncs.pauseCmd;
 import java.util.ArrayList;
 import java.util.List;
+import static binpacker.UsefulFuncs.madeIt;
 
 /**
  *
@@ -17,10 +18,12 @@ import java.util.List;
 public class Frame {
     
 //DATA
-    List<Table> tables;
-    PolyRect emptySpace;
-    Rect env;
-    List<Point> placePoints;
+    List<Table> tables;         //tables left
+    PolyRect emptySpace;        //empty space left
+    Rect env;                   //environment/plate size
+    List<Point> placePoints;    //origins that tables can be placed
+    
+    //master list of Frames
     static List<Frame> Tree = new ArrayList<>();
     
 
@@ -33,16 +36,16 @@ public class Frame {
     }
     Frame(Rect env){
         init();
-        this.env.set(env);
+        this.env.setRect(env);
         emptySpace.setEnv(env);
-        placePoints.add(env.getBtmLeft());
+        placePoints.add(env.getBL());
     }
     Frame(Frame f){
         init();
         
         setTables(f.tables);
-        emptySpace.set(f.emptySpace);
-        this.env.set(f.env);
+        emptySpace.setPolyRect(f.emptySpace);
+        this.env.setRect(f.env);
         setPlacePoints(f.placePoints);
     }
     
@@ -64,7 +67,7 @@ public class Frame {
             return false;
         
         Table t2 = new Table();
-        t2.set(t);
+        t2.setTable(t);
 
         t2.setOrigin(p);
         if (emptySpace.checkSpace(t2.getRect()))
@@ -78,7 +81,7 @@ public class Frame {
             return false;
         
         Table t2 = new Table();
-        t2.set(t);
+        t2.setTable(t);
 
         t2.setOrigin(p);
         if(i == 1)
@@ -91,14 +94,14 @@ public class Frame {
     public boolean addTable(Table t, Point p){
         
         Table tNew = new Table();
-        tNew.set(t);
+        tNew.setTable(t);
         tNew.setOrigin(p);
         
-        if(emptySpace.addFullSpace(tNew)){
+        if(emptySpace.addTable(tNew)){
             removeTable(tNew);
             removePlacePoint(p);
-            addPlacePoint(tNew.size.getBtmRight());
-            addPlacePoint(tNew.size.getTopLeft());
+            addPlacePoint(tNew.getBR());
+            addPlacePoint(tNew.getTL());
             
             return true;
         }
@@ -111,7 +114,7 @@ public class Frame {
         }
         
         for(int i = 0; i < tables.size(); i++){
-            if(tables.get(i).name.equals(t.name)){
+            if(tables.get(i).getName().equals(t.getName())){
                 tables.remove(i);
                 return true;
             }
@@ -122,7 +125,7 @@ public class Frame {
         tables.clear();
         for(Table t : tList){
             Table tNew = new Table();
-            tNew.set(t);
+            tNew.setTable(t);
             tables.add(tNew);
         }
     }
@@ -130,7 +133,7 @@ public class Frame {
         placePoints.clear();
         for(Point p : pList){
             Point pNew = new Point();
-            pNew.set(p);
+            pNew.setPoint(p);
             placePoints.add(pNew);
         }
     }
@@ -160,7 +163,7 @@ public class Frame {
         for(Table t : TableMasterList){
             
             Table t1 = new Table();
-            t1.set(t);
+            t1.setTable(t);
             
             //0deg
             Frame f1 = new Frame(env);
@@ -175,8 +178,8 @@ public class Frame {
             
             //90deg
             Table t2 = new Table();
-            t2.set(t);
-            t2.rotate();
+            t2.setTable(t);
+            t2.setRotation(true);
             
             Frame f2 = new Frame(env);
             f2.setTables(TableMasterList);
@@ -224,7 +227,7 @@ public class Frame {
                     
                     Frame f2 = new Frame(f);
                     Table t2 = new Table(t);
-                    t2.rotate();
+                    t2.setRotation(true);
                     
                     if(f2.tryTable(t2, p)){
                         if(count != 3 || tcount != 1){
@@ -247,7 +250,7 @@ public class Frame {
                     if(count == 3 && tcount == 2){
                         p.printPoint();
                         t2.setOrigin(p);
-                        t2.printACAD(0);
+                        t2.printTableACAD();;
                         f.printFrameACAD();
                         f.printPlacePointsACAD();
                         pauseCmd();
@@ -344,13 +347,13 @@ public class Frame {
                 "rectangle\n"
               + "%.4f,%.4f\n"
               + "%.4f,%.4f\n",
-                env.getBtmLeft().getX() + offset,
-                env.getBtmLeft().getY(),
-                env.getTopRight().getX() + offset,
-                env.getTopRight().getY()
+                env.getBL().getX() + offset,
+                env.getBL().getY(),
+                env.getTR().getX() + offset,
+                env.getTR().getY()
         ));
         for(Table t : f.emptySpace.fullSpace){
-            t.printACAD(offset);
+            t.printTableACAD(offset, 0);
         }
         offset += 50;
         System.out.println("");
@@ -369,13 +372,13 @@ public class Frame {
                 "rectangle\n"
               + "%.4f,%.4f\n"
               + "%.4f,%.4f\n",
-                env.getBtmLeft().getX() + offset,
-                env.getBtmLeft().getY(),
-                env.getTopRight().getX() + offset,
-                env.getTopRight().getY()
+                env.getBL().getX() + offset,
+                env.getBL().getY(),
+                env.getTR().getX() + offset,
+                env.getTR().getY()
         ));
         for(Table t : f.emptySpace.fullSpace){
-            t.printACAD(offset);
+            t.printTableACAD(offset,0);
         }
         offset += 50;
         System.out.println("");
@@ -392,13 +395,13 @@ public class Frame {
                     "rectangle\n"
                   + "%.4f,%.4f\n"
                   + "%.4f,%.4f\n",
-                    env.getBtmLeft().getX() + offset,
-                    env.getBtmLeft().getY(),
-                    env.getTopRight().getX() + offset,
-                    env.getTopRight().getY()
+                    env.getBL().getX() + offset,
+                    env.getBL().getY(),
+                    env.getTR().getX() + offset,
+                    env.getTR().getY()
             ));
             for(Table t : f.emptySpace.fullSpace){
-                t.printACAD(offset);
+                t.printTableACAD(offset, 0);
             }
             offset += 50;
             System.out.println("");

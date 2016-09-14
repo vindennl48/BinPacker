@@ -25,6 +25,10 @@ public class Point {
         this.x = x;
         this.y = y;
     }
+    Point(Point p){
+        x = p.getX();
+        y = p.getY();
+    }
     
     
 //GETTERS SETTERS
@@ -41,11 +45,11 @@ public class Point {
         this.y = y;
     }
     
-    public void set(double x, double y){
+    public void setPoint(double x, double y){
         setX(x);
         setY(y);
     }
-    public void set(Point p){
+    public void setPoint(Point p){
         setX(p.getX());
         setY(p.getY());
     }
@@ -58,9 +62,9 @@ public class Point {
 
         return false;
     }
-    public boolean isInsideOf(Rect r){
-        if(r.getBtmLeft().getX() <= (x+1) && (x+1) <= r.getTopRight().getX() &&
-           r.getBtmLeft().getY() <= (y+1) && (y+1) <= r.getTopRight().getY()){
+    public boolean isInsideOf(Rect2 r){
+        if(r.getBtmLeft().getX() < x && x < r.getTopRight().getX() &&
+           r.getBtmLeft().getY() < y && y < r.getTopRight().getY()){
             return true;
         }
         return false;
@@ -68,10 +72,29 @@ public class Point {
     
     public void printPoint(){
         System.out.println(String.format(
-              "Point: \n"
-            + "x: %.4f, y: %.4f",
+              "---------------------\n"
+            + "Point: \n"
+            + "x: %.4f, y: %.4f"
+            + "---------------------\n",
                 x,y
         ));
     }
-    
+    public void printPointACAD(){
+        System.out.print(String.format(
+                "circle\n"
+              + "%.4f,%.4f\n"
+              + "d\n"
+              + "1\n",
+                getX(),getY()
+        ));
+    }
+    public void printPointACAD(double offsX, double offsY){
+        System.out.print(String.format(
+                "circle\n"
+              + "%.4f,%.4f\n"
+              + "d\n"
+              + "1\n",
+                getX()+offsX,getY()+offsY
+        ));
+    }
 }
