@@ -113,13 +113,16 @@ public class Frame {
             return false;
         }
         
+        boolean didDelete = false;
+        
         for(int i = 0; i < tables.size(); i++){
             if(tables.get(i).getName().equals(t.getName())){
                 tables.remove(i);
-                return true;
+                didDelete = true;
+                i = -1;
             }
         }
-        return false;
+        return didDelete;
     }
     public void setTables(List<Table> tList){
         tables.clear();
@@ -200,6 +203,8 @@ public class Frame {
     static int yoffset = 0;
     
     public void runTree(){
+        System.out.println("Run Tree");
+        
         List<Frame> temp_tree = new ArrayList<>();
         
         for(Frame f : Tree){
@@ -210,7 +215,10 @@ public class Frame {
         Tree.clear();
         int tcount = 0;
         
-        for(Frame f : temp_tree){
+        while(!temp_tree.isEmpty()){
+            Frame f = temp_tree.remove(0);
+            
+            System.out.println("Frame: " + tcount);
             
             for(Point p : f.placePoints){
                 if(f.tables.isEmpty())
@@ -226,44 +234,13 @@ public class Frame {
                         tcount++;
                     }
                     
-                    Frame f2 = new Frame(f);
-                    Table t2 = new Table(t);
-                    t2.setRotation(true);
-                    
-                    if(f2.tryTable(t2, p)){
-                        if(count != 3 || tcount != 1){
-                            f2.addTable(t2, p);
-                            Tree.add(f2);
-                            tcount++;
-                        }
-                        else{
-                            f2.tryTableTemp(t2, p, 1);
-                            tcount++;
-                        }
-                    }
-//                    else if(count == 3 && tcount == 1){
-//                        boolean isn = f2.tryTable(t2, p);
-//                        System.out.println(Boolean.toString(isn));
-//                        pauseCmd();
-//                        tcount++;
-//                    }
-                    
-                    if(count == 3 && tcount == 2){
-                        p.printPoint();
-                        t2.setOrigin(p);
-                        t2.printTableACAD();;
-                        f.printFrameACAD();
-                        f.printPlacePointsACAD();
-                        pauseCmd();
-                    }
-                    
                 }
             }
         }
         count++;
         
-//        double xoffset = 0;
-//        
+        double xoffset = 0;
+        
 //        if(Tree.isEmpty())
 //            System.out.println("Tree is Empty");
 //        for(Frame f : Tree){
@@ -271,28 +248,32 @@ public class Frame {
 //                    "rectangle\n"
 //                  + "%.4f,%.4f\n"
 //                  + "%.4f,%.4f\n",
-//                    env.getBtmLeft().getX() + xoffset,
-//                    env.getBtmLeft().getY() + yoffset,
-//                    env.getTopRight().getX() + xoffset,
-//                    env.getTopRight().getY() + yoffset
+//                    env.getBL().getX() + xoffset,
+//                    env.getBL().getY() + yoffset,
+//                    env.getTR().getX() + xoffset,
+//                    env.getTR().getY() + yoffset
 //            ));
 //            for(Table t : f.emptySpace.fullSpace){
-//                t.printACAD(xoffset,yoffset);
+//                t.printTableACAD(xoffset,yoffset);
 //            }
 //            xoffset += 50;
 //            System.out.println("");
 //        }
 //        yoffset+=80;
         
+        System.out.println("count: " + count);
+        
         //printTreeACAD();
         //pauseCmd();
         
-        if(!Tree.isEmpty())
+        if(!Tree.isEmpty()){
             runTree();
+        }
         else{
             setTree(temp_tree);
             //printTree();
-            //printTreeACAD();
+            printTreeACAD();
+            System.out.println("Done");
         }
 
     }

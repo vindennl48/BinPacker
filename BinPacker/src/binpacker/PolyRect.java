@@ -82,11 +82,8 @@ public class PolyRect {
     }
     //add a table to the leftover space
     public boolean addTable(Table t){
-        if(checkSpace(t.getSize())){
-            fullSpace.add(t);
-            return true;
-        }
-        return false;
+        fullSpace.add(t);
+        return true;
     }
         
     public void printPolyRect(){

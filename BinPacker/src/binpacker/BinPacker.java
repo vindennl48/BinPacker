@@ -113,6 +113,37 @@ public class BinPacker {
             t.setName(tName);
             t.setTR(new Point(tWidth, tHeight));
             t.setPrice(tPrice);
+            
+            //0deg origin1
+            newTables.add(t);
+            
+            //0deg origin2
+            t.setOriginPos(2);
+            newTables.add(t);
+            
+            //0deg origin3
+            t.setOriginPos(3);
+            newTables.add(t);
+            
+            //0deg origin4
+            t.setOriginPos(4);
+            newTables.add(t);
+            
+            //90deg origin1
+            t.setOriginPos(1);
+            t.setRotation(true);
+            newTables.add(t);
+            
+            //90deg origin 2
+            t.setOriginPos(2);
+            newTables.add(t);
+            
+            //90deg origin 3
+            t.setOriginPos(3);
+            newTables.add(t);
+            
+            //90deg origin 4
+            t.setOriginPos(4);
             newTables.add(t);
         }
         
@@ -155,6 +186,37 @@ public class BinPacker {
             t.setName(tName);
             t.setTR(new Point(tWidth, tHeight));
             t.setPrice(tPrice);
+            
+            //0deg origin1
+            newTables.add(t);
+            
+            //0deg origin2
+            t.setOriginPos(2);
+            newTables.add(t);
+            
+            //0deg origin3
+            t.setOriginPos(3);
+            newTables.add(t);
+            
+            //0deg origin4
+            t.setOriginPos(4);
+            newTables.add(t);
+            
+            //90deg origin1
+            t.setOriginPos(1);
+            t.setRotation(true);
+            newTables.add(t);
+            
+            //90deg origin 2
+            t.setOriginPos(2);
+            newTables.add(t);
+            
+            //90deg origin 3
+            t.setOriginPos(3);
+            newTables.add(t);
+            
+            //90deg origin 4
+            t.setOriginPos(4);
             newTables.add(t);
         }
         
