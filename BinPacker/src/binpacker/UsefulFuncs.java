@@ -15,8 +15,6 @@ import java.util.logging.Logger;
  */
 public class UsefulFuncs {
     
-    static int madeItCount = 0;
-    
     static void pauseCmd(){
         System.out.print("\n\nPaused: Press Enter To Continue...\n\n");
         try {
@@ -26,6 +24,8 @@ public class UsefulFuncs {
         }
     }
     
+    //-----------------------------------
+    private static int madeItCount = 0;
     static void madeIt(){
         System.out.println("Made it to: " + madeItCount);
         madeItCount++;
@@ -34,4 +34,36 @@ public class UsefulFuncs {
         System.out.println("Made it to: " + a + " " + madeItCount);
         madeItCount++;
     }
+    //-----------------------------------
+    
+    
+    
+    //-----------------------------------
+    private static boolean verbose = true;
+    static void verboseOn(boolean b){
+        verbose = b;
+    }
+    //-----------------------------------
+    
+    
+    
+    //-----------------------------------
+    static boolean Print(String s){
+        if(!verbose)
+            return false;
+        
+        System.out.print(s);
+        
+        return true;
+    }
+    static boolean PrintP(String s){
+        if(!verbose)
+            return false;
+        
+        Print(s);
+        pauseCmd();
+        
+        return true;
+    }
+    //-----------------------------------
 }

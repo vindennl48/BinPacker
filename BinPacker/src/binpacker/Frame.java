@@ -5,6 +5,7 @@
  */
 package binpacker;
 
+import static binpacker.UsefulFuncs.Print;
 import static binpacker.UsefulFuncs.madeIt;
 import static binpacker.UsefulFuncs.pauseCmd;
 import java.util.ArrayList;
@@ -168,7 +169,6 @@ public class Frame {
             Table t1 = new Table();
             t1.setTable(t);
             
-            //0deg
             Frame f1 = new Frame(env);
             f1.setTables(TableMasterList);
             
@@ -177,23 +177,6 @@ public class Frame {
             
                 Tree.add(f1);
             }
-            
-            //90deg
-            Table t2 = new Table();
-            t2.setTable(t);
-            t2.setRotation(true);
-            
-            Frame f2 = new Frame(env);
-            f2.setTables(TableMasterList);
-            
-            if(f2.tryTable(t2, new Point(0,0))){
-                f2.addTable(t2, new Point(0,0));
-                
-                Tree.add(f2);
-            }
-            
-            
-            
         }
     }
     
@@ -203,7 +186,7 @@ public class Frame {
     static int yoffset = 0;
     
     public void runTree(){
-        System.out.println("Run Tree");
+        Print("Run Tree");
         
         List<Frame> temp_tree = new ArrayList<>();
         
@@ -218,7 +201,7 @@ public class Frame {
         while(!temp_tree.isEmpty()){
             Frame f = temp_tree.remove(0);
             
-            System.out.println("Frame: " + tcount);
+            Print("Frame: " + tcount);
             
             for(Point p : f.placePoints){
                 if(f.tables.isEmpty())
@@ -261,7 +244,7 @@ public class Frame {
 //        }
 //        yoffset+=80;
         
-        System.out.println("count: " + count);
+        Print("count: " + count);
         
         //printTreeACAD();
         //pauseCmd();
@@ -273,7 +256,7 @@ public class Frame {
             setTree(temp_tree);
             //printTree();
             printTreeACAD();
-            System.out.println("Done");
+            Print("Done");
         }
 
     }
