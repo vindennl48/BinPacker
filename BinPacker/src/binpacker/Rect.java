@@ -133,6 +133,8 @@ public class Rect {
     public void setRect(Rect r){
         btmLeft.setPoint(r.getBL());
         topRight.setPoint(r.getTR());
+        origin = r.getOriginPos();
+        rotation = r.getRotation();
     }
     public void setOriginPos(int x){
         origin = x;

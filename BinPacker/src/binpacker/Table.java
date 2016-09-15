@@ -64,6 +64,7 @@ public class Table extends Rect {
           + "BtmLeft: %.4f, %.4f \n"
           + "TopRight: %.4f, %.4f \n"
           + "Orient: %s \n"
+          + "Origin Pos: %d \n"
           + "Price: %.2f \n"
           + "----------------------------\n",
             name, 
@@ -72,6 +73,7 @@ public class Table extends Rect {
             getTR().getX(),
             getTR().getY(),
             Boolean.toString(getRotation()), 
+            getOriginPos(),
             price
         )
         );
@@ -89,6 +91,18 @@ public class Table extends Rect {
     }
     public void printTableACAD(double offsX, double offsY){
         System.out.print(String.format(
+              "rectangle\n"
+            + "%.4f,%.4f\n"
+            + "%.4f,%.4f\n",
+                getBL().getX() + offsX,
+                getBL().getY() + offsY,
+                getTR().getX() + offsX,
+                getTR().getY() + offsY
+        ));
+    }
+    
+    public String printStringTableACAD(double offsX, double offsY){
+        return (String.format(
               "rectangle\n"
             + "%.4f,%.4f\n"
             + "%.4f,%.4f\n",

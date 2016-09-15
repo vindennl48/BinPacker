@@ -6,6 +6,7 @@
 package binpacker;
 
 import static binpacker.UsefulFuncs.Print;
+import static binpacker.UsefulFuncs.PrintP;
 import static binpacker.UsefulFuncs.madeIt;
 import static binpacker.UsefulFuncs.pauseCmd;
 import java.util.ArrayList;
@@ -71,23 +72,7 @@ public class Frame {
         t2.setTable(t);
 
         t2.setOrigin(p);
-        if (emptySpace.checkSpace(t2.getRect()))
-            return true;
-        
-        return false;
-    }
-    public boolean tryTableTemp(Table t, Point p,int i){
-        
-        if(placePoints.isEmpty())
-            return false;
-        
-        Table t2 = new Table();
-        t2.setTable(t);
-
-        t2.setOrigin(p);
-        if(i == 1)
-            t2.printTable();
-        if (emptySpace.checkSpace(t2.getRect()))
+        if (emptySpace.checkSpace(t2.getSize()))
             return true;
         
         return false;
@@ -128,8 +113,7 @@ public class Frame {
     public void setTables(List<Table> tList){
         tables.clear();
         for(Table t : tList){
-            Table tNew = new Table();
-            tNew.setTable(t);
+            Table tNew = new Table(t);
             tables.add(tNew);
         }
     }
@@ -164,103 +148,103 @@ public class Frame {
     
 //MEMBERS
     public void buildTree(List<Table> TableMasterList){
-        for(Table t : TableMasterList){
-            
-            Table t1 = new Table();
-            t1.setTable(t);
-            
-            Frame f1 = new Frame(env);
-            f1.setTables(TableMasterList);
-            
-            if(f1.tryTable(t1, new Point(0,0))){
-                f1.addTable(t1, new Point(0,0));
-            
-                Tree.add(f1);
-            }
-        }
+        setTables(TableMasterList);
+        Print("finished building tree\n");
     }
-    
-    
-    //temp
-    static int count = 0;
-    static int yoffset = 0;
-    
-    public void runTree(){
-        Print("Run Tree");
+    public boolean runTreeFirst(){
         
-        List<Frame> temp_tree = new ArrayList<>();
+        PrintP("running tree\n");
         
-        for(Frame f : Tree){
-            Frame fNew = new Frame(f);
-            temp_tree.add(fNew);
+        if(!tables.isEmpty()){
+
+            for(Table t : tables){
+                
+                t.printTable();
+
+                for(Point p : placePoints){
+
+                    if(tryTable(t, p)){
+                        
+                        PrintP("table fit: " + t.getName() + "\n");
+                        
+                        Frame f = new Frame(this);
+                        f.addTable(t, p);
+                        f.runTree();
+                    }
+                }
+            }
+            addFinal();
+        }
+        else{
+            addFinal();
         }
         
-        Tree.clear();
-        int tcount = 0;
+        return true;
+    }
+    public boolean runTree(){
         
-        while(!temp_tree.isEmpty()){
-            Frame f = temp_tree.remove(0);
-            
-            Print("Frame: " + tcount);
-            
-            for(Point p : f.placePoints){
-                if(f.tables.isEmpty())
-                    break;
-                for(Table t : f.tables){
-                    
-                    Frame f1 = new Frame(f);
-                    Table t1 = new Table(t);
-                    
-                    if(f1.tryTable(t1, p)){
-                        f1.addTable(t1, p);
-                        Tree.add(f1);
-                        tcount++;
+        Print("running tree\n");
+        
+        if(!tables.isEmpty()){
+
+            for(Table t : tables){
+
+                for(Point p : placePoints){
+
+                    if(tryTable(t, p)){
+                        
+                        Print("table fit: " + t.getName() + "\n");
+                        
+                        Frame f = new Frame(this);
+                        f.addTable(t, p);
+                        f.runTree();
                     }
-                    
+                }
+            }
+            addFinal();
+        }
+        else{
+            addFinal();
+        }
+        
+        return true;
+    }
+    public void addFinal(){
+        
+        Print("adding frame\n");
+        
+        boolean addThis = false;
+            
+        if(!Tree.isEmpty()){
+            
+            for(int i = 0; i < Tree.size(); i++){
+                Frame fTree = Tree.get(i);
+
+                if(this.emptySpace.fullSpace.size() > fTree.emptySpace.fullSpace.size()){
+                    Tree.remove(i);
+                    addThis = true;
+                    i= -1;
+                }
+                else if(this.emptySpace.fullSpace.size() == fTree.emptySpace.fullSpace.size()){
+                    addThis = true;
+                }
+                else{
+                    addThis = false;
+                    break;
                 }
             }
         }
-        count++;
-        
-        double xoffset = 0;
-        
-//        if(Tree.isEmpty())
-//            System.out.println("Tree is Empty");
-//        for(Frame f : Tree){
-//            System.out.print(String.format(
-//                    "rectangle\n"
-//                  + "%.4f,%.4f\n"
-//                  + "%.4f,%.4f\n",
-//                    env.getBL().getX() + xoffset,
-//                    env.getBL().getY() + yoffset,
-//                    env.getTR().getX() + xoffset,
-//                    env.getTR().getY() + yoffset
-//            ));
-//            for(Table t : f.emptySpace.fullSpace){
-//                t.printTableACAD(xoffset,yoffset);
-//            }
-//            xoffset += 50;
-//            System.out.println("");
-//        }
-//        yoffset+=80;
-        
-        Print("count: " + count);
-        
-        //printTreeACAD();
-        //pauseCmd();
-        
-        if(!Tree.isEmpty()){
-            runTree();
-        }
         else{
-            setTree(temp_tree);
-            //printTree();
-            printTreeACAD();
-            Print("Done");
+            addThis = true;
         }
-
+        
+        if(addThis){
+            Tree.add(this);
+            Print("############################# ADDED FRAME TO TREE ##############################\n");
+        }
     }
     
+//PRINT
     public void printFrame(){
         System.out.print(
               "-------------------------\n"
@@ -289,7 +273,6 @@ public class Frame {
             f.printFrame();
         }
     }
-    
     public void printPlacePointsACAD(){
         for(Point p : placePoints){
             System.out.print(String.format(
@@ -301,7 +284,6 @@ public class Frame {
             ));
         }
     }
-    
     public void printFrameACAD(){
         
         Frame f = new Frame(this);
@@ -324,7 +306,6 @@ public class Frame {
         System.out.println("");
         
     }
-    
     public void printTreeACAD(int itr){
         
         double offset = 0;
@@ -372,4 +353,5 @@ public class Frame {
             System.out.println("");
         }
     }
+
 }

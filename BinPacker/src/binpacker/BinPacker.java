@@ -22,57 +22,9 @@ public class BinPacker {
      */
     public static void main(String[] args) {
         
-//        Rect2 small = new Rect2(20.0802,20.0802,44.0974,59.8456);
-//        Rect2 big = new Rect2(20.0802,20.0802,40.1604,51.9715);
-//        
-////        20.0802,20.0802 | 44.0974,59.8456
-////
-////        20.0802,20.0802 | 40.1604,51.9715
-//        
-//        if(small.isInsideOf(big))
-//            System.out.println("inside true");
-//        else
-//            System.out.println("inside false");
-//        
-//        if(small.isOntopOf(big))
-//            System.out.println("ontop true");
-//        else
-//            System.out.println("ontop false");
-        
-        
-        getInfo(
-            "48.5\n" +
-            "72.5\n" +
-            "7\n" +
-            "10060GAL\n" +
-            "39.7654\n" +
-            "24.0172\n" +
-            "2421.5\n" +
-            "8050GAL\n" +
-            "31.8913\n" +
-            "20.0802\n" +
-            "1561\n" +
-            "7550GAL\n" +
-            "29.9228\n" +
-            "20.0802\n" +
-            "1438.5\n" +
-            "7050GAL\n" +
-            "27.9543\n" +
-            "20.0802\n" +
-            "1385\n" +
-            "6050GAL\n" +
-            "24.0172\n" +
-            "20.0802\n" +
-            "1244.65\n" +
-            "5050GAL\n" +
-            "20.0802\n" +
-            "20.0802\n" +
-            "1106.2\n" +
-            "3020GAL\n" +
-            "12.2061\n" +
-            "8.2691\n" +
-            "400\n"
-        );
+        UsefulFuncs.verboseOn(false);
+
+        getInfo();
         run();
     }
     
@@ -109,42 +61,52 @@ public class BinPacker {
             double tHeight = scan.nextDouble();
             double tPrice = scan.nextDouble();
             scan.nextLine();
+            
             Table t = new Table();
             t.setName(tName);
             t.setTR(new Point(tWidth, tHeight));
             t.setPrice(tPrice);
             
             //0deg origin1
-            newTables.add(t);
+            Table t1 = new Table(t);
+            newTables.add(t1);
             
             //0deg origin2
             t.setOriginPos(2);
-            newTables.add(t);
+            Table t2 = new Table(t);
+            newTables.add(t2);
             
             //0deg origin3
             t.setOriginPos(3);
-            newTables.add(t);
+            Table t3 = new Table(t);
+            newTables.add(t3);
             
             //0deg origin4
             t.setOriginPos(4);
-            newTables.add(t);
+            Table t4 = new Table(t);
+            newTables.add(t4);
             
             //90deg origin1
             t.setOriginPos(1);
             t.setRotation(true);
-            newTables.add(t);
+            Table t5 = new Table(t);
+            newTables.add(t5);
             
             //90deg origin 2
             t.setOriginPos(2);
-            newTables.add(t);
+            Table t6 = new Table(t);
+            newTables.add(t6);
             
             //90deg origin 3
             t.setOriginPos(3);
-            newTables.add(t);
+            Table t7 = new Table(t);
+            newTables.add(t7);
             
             //90deg origin 4
             t.setOriginPos(4);
-            newTables.add(t);
+            Table t8 = new Table(t);
+            newTables.add(t8);
+            
         }
         
         MainNode.buildTree(newTables);
@@ -182,49 +144,59 @@ public class BinPacker {
             double tHeight = scan.nextDouble();
             double tPrice = scan.nextDouble();
             scan.nextLine();
+            
             Table t = new Table();
             t.setName(tName);
             t.setTR(new Point(tWidth, tHeight));
             t.setPrice(tPrice);
             
             //0deg origin1
-            newTables.add(t);
+            Table t1 = new Table(t);
+            newTables.add(t1);
             
             //0deg origin2
             t.setOriginPos(2);
-            newTables.add(t);
+            Table t2 = new Table(t);
+            newTables.add(t2);
             
             //0deg origin3
             t.setOriginPos(3);
-            newTables.add(t);
+            Table t3 = new Table(t);
+            newTables.add(t3);
             
             //0deg origin4
             t.setOriginPos(4);
-            newTables.add(t);
+            Table t4 = new Table(t);
+            newTables.add(t4);
             
             //90deg origin1
             t.setOriginPos(1);
             t.setRotation(true);
-            newTables.add(t);
+            Table t5 = new Table(t);
+            newTables.add(t5);
             
             //90deg origin 2
             t.setOriginPos(2);
-            newTables.add(t);
+            Table t6 = new Table(t);
+            newTables.add(t6);
             
             //90deg origin 3
             t.setOriginPos(3);
-            newTables.add(t);
+            Table t7 = new Table(t);
+            newTables.add(t7);
             
             //90deg origin 4
             t.setOriginPos(4);
-            newTables.add(t);
+            Table t8 = new Table(t);
+            newTables.add(t8);
+            
         }
         
         MainNode.buildTree(newTables);
     }
     
     public static void run(){
-        MainNode.runTree();
-        
+        MainNode.runTreeFirst();
+        MainNode.printTreeACAD();
     }
 }
