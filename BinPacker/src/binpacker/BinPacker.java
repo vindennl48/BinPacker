@@ -22,8 +22,8 @@ public class BinPacker {
      */
     public static void main(String[] args) {
         
-        UsefulFuncs.verboseOn(false);
-
+        UsefulFuncs.verboseOn(true);
+        
         getInfo();
         run();
     }
@@ -86,26 +86,29 @@ public class BinPacker {
             Table t4 = new Table(t);
             newTables.add(t4);
             
-            //90deg origin1
-            t.setOriginPos(1);
-            t.setRotation(true);
-            Table t5 = new Table(t);
-            newTables.add(t5);
             
-            //90deg origin 2
-            t.setOriginPos(2);
-            Table t6 = new Table(t);
-            newTables.add(t6);
-            
-            //90deg origin 3
-            t.setOriginPos(3);
-            Table t7 = new Table(t);
-            newTables.add(t7);
-            
-            //90deg origin 4
-            t.setOriginPos(4);
-            Table t8 = new Table(t);
-            newTables.add(t8);
+            if(t.getW() != t.getH()){
+                //90deg origin1
+                t.setOriginPos(1);
+                t.setRotation(true);
+                Table t5 = new Table(t);
+                newTables.add(t5);
+
+                //90deg origin 2
+                t.setOriginPos(2);
+                Table t6 = new Table(t);
+                newTables.add(t6);
+
+                //90deg origin 3
+                t.setOriginPos(3);
+                Table t7 = new Table(t);
+                newTables.add(t7);
+
+                //90deg origin 4
+                t.setOriginPos(4);
+                Table t8 = new Table(t);
+                newTables.add(t8);
+            }
             
         }
         
@@ -169,26 +172,29 @@ public class BinPacker {
             Table t4 = new Table(t);
             newTables.add(t4);
             
-            //90deg origin1
-            t.setOriginPos(1);
-            t.setRotation(true);
-            Table t5 = new Table(t);
-            newTables.add(t5);
             
-            //90deg origin 2
-            t.setOriginPos(2);
-            Table t6 = new Table(t);
-            newTables.add(t6);
-            
-            //90deg origin 3
-            t.setOriginPos(3);
-            Table t7 = new Table(t);
-            newTables.add(t7);
-            
-            //90deg origin 4
-            t.setOriginPos(4);
-            Table t8 = new Table(t);
-            newTables.add(t8);
+            if(t.getW() != t.getH()){
+                //90deg origin1
+                t.setOriginPos(1);
+                t.setRotation(true);
+                Table t5 = new Table(t);
+                newTables.add(t5);
+
+                //90deg origin 2
+                t.setOriginPos(2);
+                Table t6 = new Table(t);
+                newTables.add(t6);
+
+                //90deg origin 3
+                t.setOriginPos(3);
+                Table t7 = new Table(t);
+                newTables.add(t7);
+
+                //90deg origin 4
+                t.setOriginPos(4);
+                Table t8 = new Table(t);
+                newTables.add(t8);
+            }
             
         }
         
@@ -197,6 +203,16 @@ public class BinPacker {
     
     public static void run(){
         MainNode.runTreeFirst();
+        MainNode.removeTreeDuplicates();
+        
+        System.out.println("Finished Calculating.. About To Print");
+        UsefulFuncs.pauseCmd();
         MainNode.printTreeACAD();
+        
+        System.out.println(
+            String.format(
+                "\nSelling Price of Plate: $%.2f", 
+                MainNode.Tree.get(0).getPrice()
+            ));
     }
 }

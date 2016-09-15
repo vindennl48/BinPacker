@@ -26,7 +26,7 @@ public class Frame {
     List<Point> placePoints;    //origins that tables can be placed
     
     //master list of Frames
-    static List<Frame> Tree = new ArrayList<>();
+    static List<PolyRect> Tree = new ArrayList<>();
     
 
 //CONSTRUCTORS
@@ -137,10 +137,10 @@ public class Frame {
         }
         return false;
     }
-    public void setTree(List<Frame> LF){
+    public void setTree(List<PolyRect> LF){
         Tree.clear();
-        for(Frame f : LF){
-            Frame fNew = new Frame(f);
+        for(PolyRect f : LF){
+            PolyRect fNew = new PolyRect(f);
             Tree.add(fNew);
         }
     }
@@ -218,14 +218,14 @@ public class Frame {
         if(!Tree.isEmpty()){
             
             for(int i = 0; i < Tree.size(); i++){
-                Frame fTree = Tree.get(i);
+                PolyRect fPoly = Tree.get(i);
 
-                if(this.emptySpace.fullSpace.size() > fTree.emptySpace.fullSpace.size()){
+                if(this.emptySpace.getPrice() > fPoly.getPrice()){
                     Tree.remove(i);
                     addThis = true;
                     i= -1;
                 }
-                else if(this.emptySpace.fullSpace.size() == fTree.emptySpace.fullSpace.size()){
+                else if(this.emptySpace.getPrice() == fPoly.getPrice()){
                     addThis = true;
                 }
                 else{
@@ -239,9 +239,34 @@ public class Frame {
         }
         
         if(addThis){
-            Tree.add(this);
+            Tree.add(this.emptySpace);
+            removeTreeDuplicates();
             Print("############################# ADDED FRAME TO TREE ##############################\n");
         }
+    }
+    public boolean removeTreeDuplicates(){
+        
+        if(Tree.isEmpty())
+            return false;
+        
+        for(int i = 0; i < Tree.size(); i++){
+            PolyRect pr = Tree.get(i);
+            
+            if(Tree.size() > 1){
+                for(int j = i+1; j < Tree.size(); j++){
+
+                    PolyRect pr2 = Tree.get(j);
+                    
+                    if (pr.isEqualTo(pr2)){
+                        Tree.remove(j);
+                        i = -1;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
     
 //PRINT
@@ -269,8 +294,8 @@ public class Frame {
     public void printTree(){
         if(Tree.isEmpty())
             System.out.println("Tree is Empty");
-        for(Frame f : Tree){
-            f.printFrame();
+        for(PolyRect f : Tree){
+            f.printPolyRect();
         }
     }
     public void printPlacePointsACAD(){
@@ -313,7 +338,7 @@ public class Frame {
         if(Tree.isEmpty())
             System.out.println("Tree is Empty");
         
-        Frame f = new Frame(Tree.get(itr));
+        PolyRect f = new PolyRect(Tree.get(itr));
         System.out.print(String.format(
                 "rectangle\n"
               + "%.4f,%.4f\n"
@@ -323,7 +348,7 @@ public class Frame {
                 env.getTR().getX() + offset,
                 env.getTR().getY()
         ));
-        for(Table t : f.emptySpace.fullSpace){
+        for(Table t : f.fullSpace){
             t.printTableACAD(offset,0);
         }
         offset += 50;
@@ -336,7 +361,7 @@ public class Frame {
         
         if(Tree.isEmpty())
             System.out.println("Tree is Empty");
-        for(Frame f : Tree){
+        for(PolyRect f : Tree){
             System.out.print(String.format(
                     "rectangle\n"
                   + "%.4f,%.4f\n"
@@ -346,7 +371,7 @@ public class Frame {
                     env.getTR().getX() + offset,
                     env.getTR().getY()
             ));
-            for(Table t : f.emptySpace.fullSpace){
+            for(Table t : f.fullSpace){
                 t.printTableACAD(offset, 0);
             }
             offset += 50;

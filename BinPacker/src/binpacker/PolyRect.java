@@ -44,6 +44,16 @@ public class PolyRect {
     public Table getFullSpace(int i){
         return fullSpace.get(i);
     }
+    public double getPrice(){
+        
+        double d = 0;
+        
+        for(Table t : fullSpace){
+            d += t.getPrice();
+        }
+        
+        return d;
+    }
     
     public void setEnv(Rect r){
         env.setRect(r);
@@ -83,6 +93,33 @@ public class PolyRect {
     //add a table to the leftover space
     public boolean addTable(Table t){
         fullSpace.add(t);
+        return true;
+    }
+    
+    public boolean isEqualTo(PolyRect pr){
+        for(int i = 0; i < fullSpace.size(); i++){
+            Table t = fullSpace.get(i);
+            
+            boolean foundIt = false;
+            for(int j = 0; j < pr.fullSpace.size(); j++){
+                Table t2 = pr.fullSpace.get(j);
+                
+                if(t.getName().equals(t2.getName())){
+                    
+                    if(t.getBL().isEqualTo(t2.getBL()) &&
+                       t.getTR().isEqualTo(t2.getTR()) && 
+                       t.getOriginPos() == t2.getOriginPos() &&
+                       t.getRotation() == t2.getRotation()){
+                        
+                        foundIt = true;
+                        break;
+                    }
+                    
+                }
+            }
+            if(!foundIt)
+                return false;
+        }
         return true;
     }
         
