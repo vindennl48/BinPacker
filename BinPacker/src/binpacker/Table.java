@@ -101,6 +101,18 @@ public class Table extends Rect {
         ));
     }
     
+    public String StringTableACAD(double offsX, double offsY){
+        return (String.format(
+              "rectangle\n"
+            + "%.4f,%.4f\n"
+            + "%.4f,%.4f\n",
+                getBL().getX() + offsX,
+                getBL().getY() + offsY,
+                getTR().getX() + offsX,
+                getTR().getY() + offsY
+        ));
+    }
+    
     public String printStringTableACAD(double offsX, double offsY){
         return (String.format(
               "rectangle\n"

@@ -5,6 +5,9 @@
  */
 package binpacker;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,6 +67,16 @@ public class UsefulFuncs {
         pauseCmd();
         
         return true;
+    }
+    //-----------------------------------
+    
+    
+    
+    //-----------------------------------
+    static void StringToClipboard(String s){
+        StringSelection ss = new StringSelection(s);
+        Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+        cb.setContents(ss, null);
     }
     //-----------------------------------
 }

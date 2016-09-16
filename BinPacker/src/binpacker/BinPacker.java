@@ -20,9 +20,8 @@ public class BinPacker {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        
-        UsefulFuncs.verboseOn(true);
+    public static void main(String[] args) {        
+        UsefulFuncs.verboseOn(false);
         
         getInfo();
         run();
@@ -205,9 +204,13 @@ public class BinPacker {
         MainNode.runTreeFirst();
         MainNode.removeTreeDuplicates();
         
-        System.out.println("Finished Calculating.. About To Print");
-        UsefulFuncs.pauseCmd();
-        MainNode.printTreeACAD();
+        System.out.println("Finished Calculating..");
+
+        String s = MainNode.StringTreeACAD();
+        
+        UsefulFuncs.StringToClipboard(s);
+        
+        System.out.println("Result Copied to Clipboard\n");
         
         System.out.println(
             String.format(

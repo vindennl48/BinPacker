@@ -379,4 +379,35 @@ public class Frame {
         }
     }
 
+    public String StringTreeACAD(){
+        double offset = 0;
+        
+        String s = "";
+        
+        if(Tree.isEmpty()){
+            s = ("Tree is Empty");
+            return s;
+        }
+        
+        for(PolyRect f : Tree){
+            s += (String.format(
+                    "rectangle\n"
+                  + "%.4f,%.4f\n"
+                  + "%.4f,%.4f\n",
+                    env.getBL().getX() + offset,
+                    env.getBL().getY(),
+                    env.getTR().getX() + offset,
+                    env.getTR().getY()
+            ));
+            for(Table t : f.fullSpace){
+                s += t.StringTableACAD(offset, 0);
+            }
+            offset += 50;
+            s += "\n";
+        }
+        
+        
+        
+        return s;
+    }
 }
