@@ -25,6 +25,7 @@ bool BinPacker::getInput(){
 
 	int allowedMissing;
 	cin >> allowedMissing;
+	Container::sAllowedMissing = allowedMissing*2;
 
 	for (int i = 0; i < numTables; i++) {
 		Table table;
@@ -32,13 +33,12 @@ bool BinPacker::getInput(){
 		cin >> table.width;
 		cin >> table.length;
 		cin >> table.price;
-		Container::tables_all.push_back(table);
+		Container::sTables_all.push_back(table);
 		table.rotate();
-		Container::tables_all.push_back(table);
+		Container::sTables_all.push_back(table);
 	}
 
-	Container c;
-	c.allowedMissing = allowedMissing*2;
+	Container c(Container::sTables_all);
 	c.width = width;
 	c.length = length;
 	cTemplate = c;
@@ -83,7 +83,7 @@ bool BinPacker::start() {
 	Container::offsetX = 0;
 	Container::offsetY = 0;
 
-	int sz = Container::tables_all.size();
+	int sz = Container::sTables_all.size();
 	for (int i = 0; i < sz; i++) {
 		thread t1(fWork, i);
 		workers.push_back(move(t1));
@@ -118,9 +118,7 @@ bool BinPacker::fWork(int i) {
 
 	Container c = cTemplate;
 
-	_mutex.lock();
-	Table t = Container::tables_all[i];
-	_mutex.unlock();
+	Table t = c.tables_all[i];
 
 	c.addFirstTable(&t);
 	if (c.runTables()) {

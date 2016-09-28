@@ -11,13 +11,16 @@ class Container :
 {
 public:
 	Container();
+	Container(vector<Table> all_tables);
 	~Container();
 	static mutex _mutex;
 	static std::vector<Container> winners;
-	static std::vector<Table> tables_all;
+	static std::vector<Table> sTables_all;
 //	static std::vector<double> maxPriceList;
-	static int allowedMissing;
-	std::vector<Table*> tables_left;
+	static int sAllowedMissing;
+	int allowedMissing;
+	std::vector<Table> tables_all;
+	std::vector<Table> tables_left;
 	std::vector<Table> tables_used;
 	std::vector<Point> points;
 	static double offsetX;

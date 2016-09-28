@@ -4,21 +4,26 @@
 using namespace std;
 
 vector<Container> Container::winners;
-vector<Table> Container::tables_all;
-int Container::allowedMissing;
+vector<Table> Container::sTables_all;
+int Container::sAllowedMissing;
 double Container::offsetX;
 double Container::offsetY;
 mutex Container::_mutex;
 
 
 //vector<double> Container::maxPriceList;
+Container::Container() {}
 
 
-Container::Container() :
+Container::Container(vector<Table> all_tables) :
 	Rect(){
-	for (int i = 0; i < tables_all.size(); i++) {
-		tables_left.push_back(&tables_all[i]);
-	}
+	tables_all = all_tables;
+	tables_left = all_tables;
+	//for (int i = 0; i < all_tables.size(); i++) {
+	//	tables_all.push_back(all_tables[i]);
+	//	tables_left.push_back(all_tables[i]);
+	//}
+	allowedMissing = sAllowedMissing;
 }
 
 
@@ -45,7 +50,7 @@ bool Container::addFirstTable(Table *table){
 bool Container::removeTable(Table *table){
 	bool answer = false;
 	for (int i = 0; i < tables_left.size(); i++) {
-		Table *iTable = tables_left.at(i);
+		Table *iTable = &tables_left[i];
 		if (table->name == iTable->name) {
 			tables_left.erase(tables_left.begin() + i);
 			i = -1;
@@ -94,9 +99,6 @@ bool Container::runTables(){
 //	cout << "running tables" << endl;
 
 	int tblsLft = tables_left.size();
-	_mutex.lock();
-	int c_allowedMissing = allowedMissing;
-	_mutex.unlock();
 
 /*	if (tblsLft == 0) {
 		cout << "Result Found With All Tables!" << endl;
@@ -104,7 +106,7 @@ bool Container::runTables(){
 		pause;
 		return true;
 	}
-	else */if (tblsLft <= c_allowedMissing) {
+	else */if (tblsLft <= allowedMissing) {
 		//cout << "Found Layout with " << (tblsLft/2) <<
 		//	" table(s) missing." << endl;
 		//cout << "Sales Value: " << getTotal() << endl;
@@ -122,9 +124,7 @@ bool Container::runTables(){
 	}
 
 	for (int i = 0; i < tables_left.size(); i++) {
-		_mutex.lock();
-		Table table = *tables_left[i];
-		_mutex.unlock();
+		Table table = tables_left[i];
 
 		for (int j = 0; j < points.size(); j++) {
 			Point* point = &points[j];
@@ -235,7 +235,7 @@ void Container::toClipboard(const std::string &s) {
 
 Container Container::getInst(){
 
-	Container c;
+	Container c(tables_all);
 
 	c.length = length;
 	c.width = width;
