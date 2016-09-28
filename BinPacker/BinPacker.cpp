@@ -83,20 +83,14 @@ bool BinPacker::start() {
 	Container::offsetY = 0;
 
 	int sz = Container::tables_all.size();
-//	for (int i = 0; i < sz; i++) {
-		thread t1(fWork, 0);
-		thread t2(fWork, 1);
-		thread t3(fWork, 2);
-		thread t4(fWork, 3);
-		thread t5(fWork, 4);
-		thread t6(fWork, 5);
-		t1.join();
-		t2.join();
-		t3.join();
-		t4.join();
-		t5.join();
-		t6.join();
-//	}
+	for (int i = 0; i < sz; i++) {
+		thread t1(fWork, i);
+		workers.push_back(move(t1));
+	}
+
+	for (int i = 0; i < sz; i++) {
+		workers[i].join();
+	}
 
 	cout << "threads ended" << endl;
 	pause;
@@ -125,8 +119,9 @@ bool BinPacker::fWork(int i) {
 
 	c.addFirstTable(&t);
 	if (c.runTables()) {
+		cout << "thread " << i << " ended" << endl;
 		return true;
 	}
-
+	cout << "thread " << i << " ended" << endl;
 	return false;
 }
