@@ -2,6 +2,8 @@
 #include"NCLDS.h"
 #include"Rect.h"
 #include"Table.h"
+#include<thread>
+#include<mutex>
 
 
 class Container :
@@ -10,6 +12,7 @@ class Container :
 public:
 	Container();
 	~Container();
+	static mutex _mutex;
 	static std::vector<Container> winners;
 	static std::vector<Table> tables_all;
 //	static std::vector<double> maxPriceList;

@@ -8,6 +8,7 @@ vector<Table> Container::tables_all;
 int Container::allowedMissing;
 double Container::offsetX;
 double Container::offsetY;
+mutex Container::_mutex;
 
 
 //vector<double> Container::maxPriceList;
@@ -93,6 +94,9 @@ bool Container::runTables(){
 //	cout << "running tables" << endl;
 
 	int tblsLft = tables_left.size();
+	_mutex.lock();
+	int c_allowedMissing = allowedMissing;
+	_mutex.unlock();
 
 /*	if (tblsLft == 0) {
 		cout << "Result Found With All Tables!" << endl;
@@ -100,7 +104,7 @@ bool Container::runTables(){
 		pause;
 		return true;
 	}
-	else */if (tblsLft <= allowedMissing) {
+	else */if (tblsLft <= c_allowedMissing) {
 		//cout << "Found Layout with " << (tblsLft/2) <<
 		//	" table(s) missing." << endl;
 		//cout << "Sales Value: " << getTotal() << endl;
@@ -109,14 +113,18 @@ bool Container::runTables(){
 		//cout << "width: " << width << ", Length: " << length << endl;
 		///*---------------------------*/
 
+		_mutex.lock();
 		addToWinners(getInst());
+		_mutex.unlock();
 		////printLayout();
 		//cout << "To continue for a better result, press 'Enter'..." << endl;
 		//pause;
 	}
 
 	for (int i = 0; i < tables_left.size(); i++) {
+		_mutex.lock();
 		Table table = *tables_left[i];
+		_mutex.unlock();
 
 		for (int j = 0; j < points.size(); j++) {
 			Point* point = &points[j];
@@ -184,7 +192,7 @@ double Container::getTotal(){
 
 
 void Container::printLayout(){
-
+	_mutex.lock();
 	stringstream buffer;
 
 	cout << "rectangle" << '\n';
@@ -205,6 +213,7 @@ void Container::printLayout(){
 	offsetX += 53.5;
 	//Container::toClipboard(buffer.str());
 	//cout << "Result Copied To ClipBoard" << endl;
+	_mutex.unlock();
 }
 
 

@@ -2,6 +2,8 @@
 using namespace std;
 
 Container BinPacker::cTemplate;
+mutex BinPacker::_mutex;
+vector<thread> BinPacker::workers;
 
 
 BinPacker::BinPacker(){}
@@ -44,21 +46,60 @@ bool BinPacker::getInput(){
 }
 
 
-bool BinPacker::start(){
+//bool BinPacker::start(){
+//	clr;
+//
+//	Container::offsetX = 0;
+//	Container::offsetY = 0;
+//
+//	int sz = Container::tables_all.size();
+//	for (int i = 0; i < sz; i++) {
+//		Container c = cTemplate;
+//
+//		c.addFirstTable(&Container::tables_all[i]);
+//		if (c.runTables()) {
+//			return true;
+//		}
+//	}
+//
+//	if (!Container::winners.empty()) {
+//		int sz = Container::winners.size();
+//		for (int i = 0; i < sz; i++) {
+//			Container *c = &Container::winners[i];
+//
+//			c->printLayout();
+//		}
+//		return true;
+//	}
+//
+//	return false;
+//}
+
+bool BinPacker::start() {
+	pause;
 	clr;
 
 	Container::offsetX = 0;
 	Container::offsetY = 0;
 
 	int sz = Container::tables_all.size();
-	for (int i = 0; i < sz; i++) {
-		Container c = cTemplate;
+//	for (int i = 0; i < sz; i++) {
+		thread t1(fWork, 0);
+		thread t2(fWork, 1);
+		thread t3(fWork, 2);
+		thread t4(fWork, 3);
+		thread t5(fWork, 4);
+		thread t6(fWork, 5);
+		t1.join();
+		t2.join();
+		t3.join();
+		t4.join();
+		t5.join();
+		t6.join();
+//	}
 
-		c.addFirstTable(&Container::tables_all[i]);
-		if (c.runTables()) {
-			return true;
-		}
-	}
+	cout << "threads ended" << endl;
+	pause;
 
 	if (!Container::winners.empty()) {
 		int sz = Container::winners.size();
@@ -67,6 +108,23 @@ bool BinPacker::start(){
 
 			c->printLayout();
 		}
+		return true;
+	}
+
+	return false;
+}
+
+bool BinPacker::fWork(int i) {
+	cout << "start thread " << i << "\n";
+
+	Container c = cTemplate;
+
+	_mutex.lock();
+	Table t = Container::tables_all[i];
+	_mutex.unlock();
+
+	c.addFirstTable(&t);
+	if (c.runTables()) {
 		return true;
 	}
 
