@@ -1,6 +1,6 @@
 #include "Container.h"
 #include<sstream>
-#include<stdio.h>
+#include<iomanip>
 using namespace std;
 
 vector<Container> Container::winners;
@@ -191,29 +191,29 @@ double Container::getTotal(){
 }
 
 
-void Container::printLayout(){
-	_mutex.lock();
+#define PRECISION  4
+string Container::printLayout() {
 	stringstream buffer;
 
-	cout << "rectangle" << '\n';
-	printf("%.4f", 0.0 + offsetX); cout << ","; printf("%.4f", 0.0 + offsetY); cout << '\n';
-	printf("%.4f", width + offsetX); cout << ","; printf("%.4f", length + offsetY); cout << '\n' << '\n';
+	buffer << "rectangle \r\n";
+	buffer << fixed << setprecision(PRECISION) << (0 + offsetX) << ",";
+	buffer << fixed << setprecision(PRECISION) << (0 + offsetY) << "\r\n";
+	buffer << fixed << setprecision(PRECISION) << (width + offsetX) << ",";
+	buffer << fixed << setprecision(PRECISION) << (length + offsetY) << "\r\n\r\n";
+
 	for (int i = 0; i < tables_used.size(); i++) {
 		Table* table = &tables_used[i];
 
-//		printf("%.4f", table->getLeft()); cout << ","; printf("%.4f", table->getBottom()); cout << '\n';
-//		printf("%.4f", table->width); cout << ","; printf("%.4f", table->length); cout << '\n' << '\n';
-
-
-		printf("%.4f", table->getLeft() + offsetX); cout << ","; printf("%.4f", table->getBottom() + offsetY); cout << '\n';
-		printf("%.4f", table->getRight() + offsetX); cout << ","; printf("%.4f", table->getTop() + offsetY); cout << '\n' << '\n';
-
+		buffer << fixed << setprecision(PRECISION) << (table->getLeft() + offsetX) << ",";
+		buffer << fixed << setprecision(PRECISION) << (table->getBottom() + offsetY) << "\r\n";
+		buffer << fixed << setprecision(PRECISION) << (table->getRight() + offsetX) << ",";
+		buffer << fixed << setprecision(PRECISION) << (table->getTop() + offsetY) << "\r\n\r\n";
 	}
 
 	offsetX += 53.5;
-	//Container::toClipboard(buffer.str());
+	return buffer.str();
+	//toClipboard(buffer.str());
 	//cout << "Result Copied To ClipBoard" << endl;
-	_mutex.unlock();
 }
 
 

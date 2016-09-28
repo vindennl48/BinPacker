@@ -28,7 +28,7 @@ public:
 	bool runTables();
 	bool doesFit(Table *table);
 	double getTotal();
-	void printLayout();
+	string printLayout();
 	static void toClipboard(const std::string &s);
 	Container getInst();
 	static bool addToWinners(Container c);

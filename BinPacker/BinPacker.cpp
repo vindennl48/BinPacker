@@ -1,4 +1,5 @@
 #include "BinPacker.h"
+#include<sstream>
 using namespace std;
 
 Container BinPacker::cTemplate;
@@ -96,12 +97,16 @@ bool BinPacker::start() {
 	pause;
 
 	if (!Container::winners.empty()) {
+		stringstream buffer;
 		int sz = Container::winners.size();
 		for (int i = 0; i < sz; i++) {
 			Container *c = &Container::winners[i];
 
-			c->printLayout();
+			buffer << c->printLayout();
 		}
+		Container::toClipboard(buffer.str());
+		cout << "Result Copied To ClipBoard" << endl;
+
 		return true;
 	}
 
