@@ -1,4 +1,8 @@
-﻿  Container.cpp
+﻿  main.cpp
+  Table.cpp
+  Rect.cpp
+  Point.cpp
+  Container.cpp
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(19): warning C4018: '<': signed/unsigned mismatch
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(47): warning C4018: '<': signed/unsigned mismatch
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(69): warning C4018: '<': signed/unsigned mismatch
@@ -6,5 +10,8 @@ c:\users\shop\desktop\binpacker\binpacker\container.cpp(124): warning C4018: '<'
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(129): warning C4018: '<': signed/unsigned mismatch
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(168): warning C4018: '<': signed/unsigned mismatch
 c:\users\shop\desktop\binpacker\binpacker\container.cpp(186): warning C4018: '<': signed/unsigned mismatch
-c:\users\shop\desktop\binpacker\binpacker\container.cpp(229): warning C4018: '<': signed/unsigned mismatch
+c:\users\shop\desktop\binpacker\binpacker\container.cpp(204): warning C4018: '<': signed/unsigned mismatch
+  BinPacker.cpp
+  Generating Code...
+  LINK : C:\Users\SHOP\Desktop\BinPacker\BinPacker\Debug\BinPacker.exe not found or not built by the last incremental link; performing full link
   BinPacker.vcxproj -> C:\Users\SHOP\Desktop\BinPacker\BinPacker\Debug\BinPacker.exe
